@@ -36,7 +36,14 @@ class AppointmentDataTable extends AbstractDataTable
 
     public function query(Appointment $model): QueryBuilder
     {
-        return $model->newQuery()->with(['client', 'doctor']);
+        $query = $model->newQuery()->with(['client', 'doctor']);
+        
+        if (auth()->guard('doctor')->check()) {
+            $query->where('doctor_id', auth()->guard('doctor')->id())
+                  ->whereDate('scheduled_at', today());
+        }
+        
+        return $query;
     }
 
     public function html(): HtmlBuilder

@@ -48,13 +48,16 @@ Route::middleware(['auth:doctor'])->group(function () {
     Route::get('/prescriptions/{id}/print', [App\Http\Controllers\PrintRecordController::class, 'printDocument'])->name('print.document');
 });
 
-// 3. ÁREA ATENDENTE (Agendamentos e Painel de Chamada)
-Route::middleware(['auth:collaborator'])->group(function () {
+// 3. ÁREA ATENDENTE E MÉDICOS (Agendamentos e Painel de Chamada)
+Route::middleware(['auth:collaborator,doctor'])->group(function () {
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    
-    Route::get('/painel/control', [AttendanceCallController::class, 'panel'])->name('attendance.panel');
     Route::post('/appointments/{appointment}/call', [AttendanceCallController::class, 'callPatient'])->name('attendance.call');
+    Route::get('/painel/control', [AttendanceCallController::class, 'panel'])->name('attendance.panel');
+});
+
+Route::middleware(['auth:collaborator'])->group(function () {
+    Route::resource('appointments', AppointmentController::class)->except(['index']);
+    Route::post('/appointments/{appointment}/checkin', [AppointmentController::class, 'checkIn'])->name('appointments.checkin');
 });
 
 // 4. ÁREA DO PACIENTE / CLIENTE

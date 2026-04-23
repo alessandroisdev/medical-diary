@@ -59,7 +59,10 @@
 
                     @auth('doctor')
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{{ route('records.index') }}">Prontuário Médico</a>
+                        <a class="nav-link text-warning fw-bold" href="{{ route('records.index') }}"><i class="bi bi-file-medical-fill me-1"></i>Prontuário Médico</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('appointments.index') }}"><i class="bi bi-person-lines-fill me-1"></i>Minha Fila de Hoje</a>
                     </li>
                     @endauth
                     
