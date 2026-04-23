@@ -1,0 +1,22 @@
+// Variables essenciais e personalização do Bootstrap
+$primary: #0d6efd;
+$secondary: #6c757d;
+$success: #198754;
+$info: #0dcaf0;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #212529;
+
+// Importar Bootstrap 5
+@import "bootstrap/scss/bootstrap";
+// Importar Bootstrap Icons
+@import "bootstrap-icons/font/bootstrap-icons.css";
+// SweetAlert2 (opcional para fallback, usaremos modais nativos ou toasts)
+@import "sweetalert2/src/sweetalert2.scss";
+
+// Seus próprios estilos em SCSS aqui
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+}
