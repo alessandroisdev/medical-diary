@@ -61,6 +61,8 @@
                             <li><a class="dropdown-item" href="{{ route('health-insurances.index') }}"><i class="bi bi-shield-check me-2 text-success"></i>Convênios / Acordos</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-2 text-danger"></i>Escala e Agendas Médico</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-secondary fw-bold" href="{{ route('settings.index') }}"><i class="bi bi-gear-fill me-2"></i>Configurações Globais</a></li>
                         </ul>
                     </li>
                     @endauth

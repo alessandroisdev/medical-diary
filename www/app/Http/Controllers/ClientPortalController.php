@@ -32,7 +32,9 @@ class ClientPortalController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('portal', compact('specialties', 'appointments', 'prescriptions'));
+        $toleranceHours = \App\Models\Setting::get('cancellation_tolerance_hours', 24);
+
+        return view('portal', compact('specialties', 'appointments', 'prescriptions', 'toleranceHours'));
     }
 
     public function getDoctors(Request $request)
@@ -223,5 +225,36 @@ class ClientPortalController extends Controller
         $isClientView = true;
 
         return view('print.record', compact('record', 'prescription', 'isClientView'));
+    }
+
+    public function cancelAppointment(Request $request, $id)
+    {
+        $clientId = Auth::guard('client')->id();
+        $appointment = Appointment::where('id', $id)
+            ->where('client_id', $clientId)
+            ->whereIn('status', ['scheduled', 'confirmed'])
+            ->firstOrFail();
+
+        $toleranceHours = \App\Models\Setting::get('cancellation_tolerance_hours', 24);
+        
+        $scheduledAt = Carbon::parse($appointment->scheduled_at);
+        $now = Carbon::now();
+
+        if ($toleranceHours > 0) {
+            $hoursDifference = $now->diffInHours($scheduledAt, false); // false para dar negativo se ja passou
+            if ($hoursDifference < $toleranceHours) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => "Cancelamento bloqueado. A clínica exige aviso prévio de no mínimo {$toleranceHours} horas."
+                ], 403);
+            }
+        }
+
+        $appointment->update(['status' => 'canceled']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Agendamento cancelado com sucesso. O horário foi liberado.'
+        ]);
     }
 }

@@ -19,6 +19,13 @@ class DatabaseSeeder extends Seeder
     {
         $password = Hash::make('password');
 
+        // Configurações Globais Iniciais
+        \App\Models\Setting::create([
+            'key' => 'cancellation_tolerance_hours',
+            'label' => 'Tolerância Mínima para Cancelamento pelo Paciente (Horas)',
+            'value' => '24', // 1 Dia de antecedência padrão
+        ]);
+
         // Admin
         User::create([
             'name' => 'Admin Sistema',

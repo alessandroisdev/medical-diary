@@ -33,6 +33,10 @@ Route::middleware(['auth:admin'])->group(function () {
     // Gestão Estrutural (Especialidades e Convênios)
     Route::resource('specialties', \App\Http\Controllers\Admin\SpecialtyController::class)->except(['show']);
     Route::resource('health-insurances', \App\Http\Controllers\Admin\HealthInsuranceController::class)->except(['show']);
+
+    // Configurações Globais
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
 });
 
 // Acesso Misto (Admin + Atendente)
@@ -63,6 +67,7 @@ Route::middleware(['auth:collaborator'])->group(function () {
 Route::middleware(['auth:client'])->group(function () {
     Route::get('/portal', [\App\Http\Controllers\ClientPortalController::class, 'index'])->name('portal.index');
     Route::get('/portal/prescriptions/{id}/download', [\App\Http\Controllers\ClientPortalController::class, 'downloadPrescription'])->name('portal.prescription.download');
+    Route::post('/portal/appointments/{id}/cancel', [\App\Http\Controllers\ClientPortalController::class, 'cancelAppointment'])->name('portal.appointment.cancel');
     
     // API Interna do Motor de Escalas via JS FETCH
     Route::get('/api/portal/doctors', [\App\Http\Controllers\ClientPortalController::class, 'getDoctors']);

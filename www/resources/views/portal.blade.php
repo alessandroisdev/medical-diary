@@ -128,6 +128,24 @@
                                             </div>
                                             <div class="col-md-4 text-md-end mt-3 mt-md-0">
                                                 <span class="badge {{ $badgeClass }} fs-6 shadow-sm"><i class="bi bi-record-circle me-1"></i>{{ $statusFormat }}</span>
+                                                
+                                                @if(in_array($app->status, ['scheduled', 'confirmed']))
+                                                    @php
+                                                        $diffHours = \Carbon\Carbon::now()->diffInHours(\Carbon\Carbon::parse($app->scheduled_at), false);
+                                                        $canCancel = $toleranceHours == 0 || $diffHours > $toleranceHours;
+                                                    @endphp
+                                                    <div class="mt-2" id="block-cancel-{{ $app->id }}">
+                                                        @if($canCancel)
+                                                            <button class="btn btn-sm btn-outline-danger fw-bold" onclick="cancelEvent('{{ $app->id }}')">
+                                                                <i class="bi bi-x-circle me-1"></i> Cancelar Fila
+                                                            </button>
+                                                        @else
+                                                            <button class="btn btn-sm btn-light text-muted border" disabled title="Tolerância de {{ $toleranceHours }}h excedida">
+                                                                <i class="bi bi-lock-fill me-1"></i> Cancelamento Bloqueado
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -318,7 +336,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Script to deal with Bootstrap Tab activation from URL ?tab= option if we wanted
+    window.cancelEvent = async function(id) {
+        if(!confirm('Tem certeza absoluta que deseja desistir deste atendimento? A janela liberará o seu horário imediatamente.')) return;
+        
+        try {
+            const { data } = await axios.post(`/portal/appointments/${id}/cancel`);
+            if (data.success) {
+                showToast('Cancelado', data.message, 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        } catch(e) {
+            let msg = e.response?.data?.message || 'Erro na rede ou bloqueio de tolerância.';
+            showToast('Alerta de Bloqueio', msg, 'danger');
+        }
+    }
 });
 </script>
 @endpush
