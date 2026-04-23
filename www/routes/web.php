@@ -59,9 +59,13 @@ Route::middleware(['auth:collaborator'])->group(function () {
 
 // 4. ÁREA DO PACIENTE / CLIENTE
 Route::middleware(['auth:client'])->group(function () {
-    Route::get('/portal', function() {
-        return view('portal');
-    })->name('portal.index');
+    Route::get('/portal', [\App\Http\Controllers\ClientPortalController::class, 'index'])->name('portal.index');
+    
+    // API Interna do Motor de Escalas via JS FETCH
+    Route::get('/api/portal/doctors', [\App\Http\Controllers\ClientPortalController::class, 'getDoctors']);
+    Route::get('/api/portal/slots', [\App\Http\Controllers\ClientPortalController::class, 'getSlots']);
+    Route::get('/api/portal/payment-methods', [\App\Http\Controllers\ClientPortalController::class, 'getPaymentMethods']);
+    Route::post('/api/portal/book', [\App\Http\Controllers\ClientPortalController::class, 'book']);
 });
 
 // TV DA RECEPÇÃO (Stream passivo público ou acessível por display TV local)

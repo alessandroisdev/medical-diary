@@ -27,14 +27,22 @@
                         @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
                     <div class="row g-3 mb-3">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <label class="form-label fw-bold">CRM</label>
                             <input type="text" name="crm" class="form-control" required placeholder="Ex: 12345-SP" value="{{ old('crm') }}">
                             @error('crm') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label fw-bold">Especialidade (Opcional)</label>
-                            <input type="text" name="specialty" class="form-control" placeholder="Pediatria, Clínica Geral..." value="{{ old('specialty') }}">
+                        <div class="col-sm-4">
+                            <label class="form-label fw-bold">Duração do Slot (min)</label>
+                            <input type="number" name="consultation_duration_minutes" class="form-control" min="10" max="120" step="5" required value="{{ old('consultation_duration_minutes', 30) }}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label fw-bold">Especialidades Base</label>
+                            <select name="specialties[]" class="form-select live-search" multiple required placeholder="Selecione...">
+                                @foreach($specialties as $sp)
+                                    <option value="{{ $sp->id }}">{{ $sp->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="mb-3 border-top pt-3 mt-4">
@@ -51,4 +59,19 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.live-search').forEach((el) => {
+        new TomSelect(el, {
+            plugins: ['remove_button'],
+            create: false,
+            sortField: { field: "text", direction: "asc" }
+        });
+    });
+});
+</script>
+@endpush
 @endsection
