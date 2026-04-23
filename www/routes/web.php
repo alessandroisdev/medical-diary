@@ -40,9 +40,7 @@ Route::middleware(['auth:admin,collaborator'])->group(function() {
 
 // 2. ÁREA MÉDICA (Prontuários e Impressão)
 Route::middleware(['auth:doctor'])->group(function () {
-    Route::get('/records', [MedicalRecordController::class, 'index'])->name('records.index');
-    Route::post('/records', [MedicalRecordController::class, 'store'])->name('records.store');
-    Route::put('/records/{record}', [MedicalRecordController::class, 'update'])->name('records.update');
+    Route::resource('records', MedicalRecordController::class)->except(['show', 'destroy']);
     Route::get('/prescriptions/{id}/print', [App\Http\Controllers\PrintRecordController::class, 'printDocument'])->name('print.document');
 });
 

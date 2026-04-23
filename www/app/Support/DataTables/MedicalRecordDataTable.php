@@ -15,22 +15,11 @@ class MedicalRecordDataTable extends AbstractDataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function($row){
-                $safeJson = htmlspecialchars(json_encode([
-                    'id' => $row->id,
-                    'client_id' => $row->client_id,
-                    'doctor_id' => $row->doctor_id,
-                    'appointment_id' => $row->appointment_id,
-                    'symptoms' => $row->symptoms,
-                    'diagnosis' => $row->diagnosis,
-                    'treatment_plan' => $row->treatment_plan,
-                    'notes' => $row->notes
-                ]), ENT_QUOTES, 'UTF-8');
-                
                 return '
                 <div class="btn-group">
-                    <button class="btn btn-sm btn-outline-primary" title="Editar Prontuário" onclick="editRecord('.$safeJson.')">
+                    <a href="/records/'.$row->id.'/edit" class="btn btn-sm btn-outline-primary" title="Editar Avaliação / Prontuário">
                         <i class="bi bi-journal-medical"></i>
-                    </button>
+                    </a>
                     <a href="/prescriptions/'.$row->id.'/print" target="_blank" class="btn btn-sm btn-outline-secondary" title="Imprimir Receita/Prontuário">
                         <i class="bi bi-printer"></i>
                     </a>

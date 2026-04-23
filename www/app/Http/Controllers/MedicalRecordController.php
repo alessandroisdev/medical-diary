@@ -15,10 +15,15 @@ class MedicalRecordController extends Controller
 {
     public function index(MedicalRecordDataTable $dataTable)
     {
+        return $dataTable->render('records.index');
+    }
+
+    public function create()
+    {
         $clients = Client::all();
         $doctors = Doctor::all();
         $appointments = Appointment::where('status', 'in_consultation')->get();
-        return $dataTable->render('records.index', compact('clients', 'doctors', 'appointments'));
+        return view('records.create', compact('clients', 'doctors', 'appointments'));
     }
 
     public function store(Request $request)
@@ -70,7 +75,16 @@ class MedicalRecordController extends Controller
 
         return response()->json([
             'message' => 'Prontuário Médico assinado e salvo com sucesso!',
+            'redirect' => route('records.index')
         ]);
+    }
+
+    public function edit(MedicalRecord $record)
+    {
+        $clients = Client::all();
+        $doctors = Doctor::all();
+        $appointments = Appointment::where('status', 'in_consultation')->get();
+        return view('records.edit', compact('record', 'clients', 'doctors', 'appointments'));
     }
 
     public function update(Request $request, MedicalRecord $record)
@@ -99,6 +113,7 @@ class MedicalRecordController extends Controller
 
         return response()->json([
             'message' => 'Evolução clínica do prontuário atualizada com sucesso!',
+            'redirect' => route('records.index')
         ]);
     }
 }
