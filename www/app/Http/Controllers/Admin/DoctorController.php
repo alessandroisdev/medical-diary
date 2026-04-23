@@ -16,42 +16,64 @@ class DoctorController extends Controller
         return $dataTable->render('admin.doctors.index');
     }
 
+    public function create()
+    {
+        return view('admin.doctors.create');
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:doctors,email',
+            'email' => 'required|string|email|max:255|unique:doctors',
+            'crm' => 'required|string|max:50|unique:doctors',
+            'specialty' => 'nullable|string|max:255',
             'password' => 'required|string|min:6',
-            'crm' => 'required|string|unique:doctors,crm',
-            'specialty' => 'nullable|string',
         ]);
 
-        $data['password'] = Hash::make($data['password']);
-        Doctor::create($data);
+        Doctor::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'crm' => $data['crm'],
+            'specialty' => $data['specialty'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-        return response()->json(['message' => 'Médico cadastrado com sucesso!']);
+        return redirect()->route('doctors.index')->with('success', 'Acesso Médico criado e ativado com sucesso!');
+    }
+
+    public function edit(Doctor $doctor)
+    {
+        return view('admin.doctors.edit', compact('doctor'));
     }
 
     public function update(Request $request, Doctor $doctor)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => ['required','email', Rule::unique('doctors')->ignore($doctor->id)],
-            'crm' => ['required','string', Rule::unique('doctors')->ignore($doctor->id)],
-            'specialty' => 'nullable|string',
+            'email' => 'required|string|email|max:255|unique:doctors,email,'.$doctor->id,
+            'crm' => 'required|string|max:50|unique:doctors,crm,'.$doctor->id,
+            'specialty' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:6',
         ]);
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+        $doctor->name = $data['name'];
+        $doctor->email = $data['email'];
+        $doctor->crm = $data['crm'];
+        $doctor->specialty = $data['specialty'];
+
+        if (!empty($data['password'])) {
+            $doctor->password = Hash::make($data['password']);
         }
 
-        $doctor->update($data);
-        return response()->json(['message' => 'Ficha médica atualizada!']);
+        $doctor->save();
+
+        return redirect()->route('doctors.index')->with('success', 'Credenciais cadastrais atualizadas!');
     }
 
     public function destroy(Doctor $doctor)
     {
         $doctor->delete();
-        return response()->json(['message' => 'Acesso clínico removido com sucesso.']);
+        return redirect()->route('doctors.index')->with('success', 'Acesso clínico removido com sucesso.');
     }
 }

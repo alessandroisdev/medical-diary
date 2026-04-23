@@ -28,8 +28,8 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/transactions/metrics', [TransactionController::class, 'metrics'])->name('transactions.metrics');
     
     // Gestão de RH e Acessos
-    Route::resource('doctors', DoctorController::class)->except(['create', 'show', 'edit']);
-    Route::resource('collaborators', CollaboratorController::class)->except(['create', 'show', 'edit']);
+    Route::resource('doctors', DoctorController::class)->except(['show']);
+    Route::resource('collaborators', CollaboratorController::class)->except(['show']);
 });
 
 // Acesso Misto (Admin + Atendente)
