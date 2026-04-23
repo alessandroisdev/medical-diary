@@ -12,4 +12,19 @@ class Doctor extends Authenticatable implements Auditable
     use SoftDeletes, UsesUuid, \OwenIt\Auditing\Auditable;
 
     protected $guarded = [];
+
+    public function specialties()
+    {
+        return $this->belongsToMany(Specialty::class);
+    }
+
+    public function availabilities()
+    {
+        return $this->hasMany(DoctorAvailability::class);
+    }
+
+    public function prices()
+    {
+        return $this->hasMany(DoctorPrice::class);
+    }
 }

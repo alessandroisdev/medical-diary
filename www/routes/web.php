@@ -30,6 +30,10 @@ Route::middleware(['auth:admin'])->group(function () {
     // Gestão de RH e Acessos
     Route::resource('doctors', DoctorController::class)->except(['show']);
     Route::resource('collaborators', CollaboratorController::class)->except(['show']);
+    
+    // Gestão Estrutural (Especialidades e Convênios)
+    Route::resource('specialties', \App\Http\Controllers\Admin\SpecialtyController::class)->except(['show']);
+    Route::resource('health-insurances', \App\Http\Controllers\Admin\HealthInsuranceController::class)->except(['show']);
 });
 
 // Acesso Misto (Admin + Atendente)

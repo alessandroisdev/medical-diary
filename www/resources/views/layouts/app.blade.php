@@ -48,7 +48,11 @@
                             <li><a class="dropdown-item" href="{{ route('doctors.index') }}"><i class="bi bi-person-heart me-2"></i>Corpo Clínico (Médicos)</a></li>
                             <li><a class="dropdown-item" href="{{ route('collaborators.index') }}"><i class="bi bi-person-badge me-2"></i>Recepção (Atendentes)</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-2"></i>Escala e Agendas Médico</a></li>
+                            <li><h6 class="dropdown-header">Estrutura Clínico-Financeira</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('specialties.index') }}"><i class="bi bi-tags me-2 text-warning"></i>Especialidades Clínicas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('health-insurances.index') }}"><i class="bi bi-shield-check me-2 text-success"></i>Convênios / Acordos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-2 text-danger"></i>Escala e Agendas Médico</a></li>
                         </ul>
                     </li>
                     @endauth
