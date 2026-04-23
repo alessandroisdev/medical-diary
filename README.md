@@ -8,12 +8,13 @@ Sistema SAAS completo de Agendamento e Prontuário Médico.
 - **Banco de Dados:** MariaDB e Redis para controle de filas, SS-Caching, e Session.
 - **Docker:** Ambiente isolado em `/.Docker`. Mapeamento de portas na `8084` em `./www`.
 
-## Padrões Adotados (Fundamental)
-1. **Autenticação Multi-Nível:** Guards Isolados (`admin`, `doctors`, `collaborators`, `clients`) com Login interface unificado em `/login` mas redirecionamento em silo, todos sob o middleware `auth:*`.
-2. **Datatables Server-Side:** Exclusivamente via método `POST` implementando `App\Support\DataTables\AbstractDataTable` para segurança JSON.
-3. **Tracking & LGPD:** Todas as entidades possuem ID randômico mascarado (`UsesUuid`), mantendo controle estrito com `SoftDeletes` e auditoria minuciosa `\OwenIt\Auditing\Contracts\Auditable`.
-4. **Resiliência AJAX:** Todas as requisições Frontend são interceptadas por um arquivo raiz TS (`app.ts`), anulando cliques errôneos e parseando FormDatas limpos.
-5. **Gateway de Notificações Multi-Channel:** Configurado sob `AppointmentReminderNotification` preparado para despachar avisos via Mail, Redis Database, e estrutura reservada nativa para SMS e WhatsApp API.
+## Padrões Adotados (Evolução Full-Page Anti-Modal)
+O projeto recentemente passou por uma modernização arquitetural massiva abandonando engessamentos Modais JS-based em prol de rotas **Full-Page Resources**:
+1. **Autenticação Multi-Nível:** Guards Isolados (`admin`, `doctors`, `collaborators`, `clients`) com Login interface unificado em `/login` redirecionando para views totalmente modularizadas (`Specialties`, `HealthInsurances`, `Doctors`, etc).
+2. **Datatables Server-Side:** Exclusivamente via método `POST` implementando `App\Support\DataTables\AbstractDataTable` para segurança JSON, agora integrados perfeitamente à botões de gatilhos Full Page (Create/Edit) e Botões Nativos de Status "Check-In".
+3. **Totem e TV de Chamada (Real-Time)**: Implementação de Server-Sent Events (`SSE`) que permite "Chamada de Senha", tocando alertas na Fila Visual de maneira orgânica em PHP sem a sobrecarga de WebSockets Node.js, com fluxo atritivo entre Recepcionista x Médicos.
+4. **Motor Matemático de Agendamentos (Self-Booking)**: Portal inteligente do paciente construído em Javascript assíncrono. Subtrai da agenda matriz (`doctor_availabilities`) os dias feriados logísticos (`DoctorSchedules`) e cria botões cirúrgicos do tempo ocioso para a compra/agendamento de consultas sem risco de Conflitos (Overbooking Nativo é bloqueado via API, mas liberado para a Recepção Local através de Override manual).
+5. **Tracking & LGPD Contábil:** Modelos sensíveis como Entidades Administrativas e Transacionais (`Transaction`) mantêm controle com `SoftDeletes` impedindo que apagamentos manuais rompam integrações com o Livro-Caixa. Contabilidade é unificada via TomSelect.
 6. **Emissão de Prontuários (A4 CSS):** Impressão de prontuários com hash dinâmico via gerador de layout CSS dedicado pra papeis físicos isolando layouts digitais.
 
 ## Executando o Projeto

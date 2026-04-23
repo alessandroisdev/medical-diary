@@ -12,6 +12,8 @@ use App\Models\Appointment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
+use OpenApi\Attributes as OA;
+
 class ClientPortalController extends Controller
 {
     public function index()
@@ -67,6 +69,14 @@ class ClientPortalController extends Controller
         return response()->json($methods);
     }
 
+    #[OA\Get(
+        path: '/api/portal/slots',
+        summary: 'Obtém Horários Disponíveis para um Médico via Motor Matemático',
+        description: 'Exclui automaticamente bloqueios administrativos e conflitos.',
+        responses: [
+            new OA\Response(response: 200, description: 'Successful operation')
+        ]
+    )]
     public function getSlots(Request $request)
     {
         $request->validate([

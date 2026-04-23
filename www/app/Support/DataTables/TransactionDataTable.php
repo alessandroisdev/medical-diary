@@ -14,6 +14,7 @@ class TransactionDataTable extends AbstractDataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('action', 'transactions.action')
             ->editColumn('amount', function ($row) {
                 return 'R$ ' . number_format($row->amount, 2, ',', '.');
             })
@@ -64,6 +65,12 @@ class TransactionDataTable extends AbstractDataTable
             Column::make('payment_method')->title('Método'),
             Column::make('status')->title('Status')->addClass('text-center'),
             Column::make('due_date')->title('Vencimento')->addClass('text-center'),
+            Column::computed('action')
+                  ->title('Ações')
+                  ->exportable(false)
+                  ->printable(false)
+                  ->width(80)
+                  ->addClass('text-center text-nowrap'),
         ];
     }
 }

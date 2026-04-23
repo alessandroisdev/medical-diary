@@ -23,9 +23,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // 1. ÁREA ADMINISTRATIVA (Financeiro e RH Corporativo)
 Route::middleware(['auth:admin'])->group(function () {
     // Financeiro
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/transactions/metrics', [TransactionController::class, 'metrics'])->name('transactions.metrics');
+    Route::resource('transactions', TransactionController::class)->except(['show']);
     
     // Gestão de RH e Acessos
     Route::resource('doctors', DoctorController::class)->except(['show']);

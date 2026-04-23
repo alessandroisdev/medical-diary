@@ -1,0 +1,28 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Medical Diary SaaS API",
+        "description": "API Central do sistema administrativo (Modernizado para Recursos Full-Page anti-modais, com Motor SSE de Totem).",
+        "version": "11.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8084",
+            "description": "Local API Server"
+        }
+    ],
+    "paths": {
+        "/api/portal/slots": {
+            "get": {
+                "summary": "Obtém Horários Disponíveis para um Médico via Motor Matemático",
+                "description": "Exclui automaticamente bloqueios administrativos e conflitos.",
+                "operationId": "6727dedbd9776f4d0a6a5c3781176096",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    }
+}

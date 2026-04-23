@@ -10,6 +10,21 @@ use App\Support\DataTables\AppointmentDataTable;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+/**
+ * @OA\Info(
+ *      version="11.0.0",
+ *      title="Medical Diary SaaS API",
+ *      description="API Central do sistema administrativo.",
+ *      @OA\Contact(
+ *          email="admin@medical.diary"
+ *      )
+ * )
+ *
+ * @OA\Server(
+ *      url="http://localhost:8084",
+ *      description="Local API Server"
+ * )
+ */
 class AppointmentController extends Controller
 {
     public function index(AppointmentDataTable $dataTable)

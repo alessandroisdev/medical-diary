@@ -19,6 +19,12 @@ class TransactionController extends Controller
         return $dataTable->render('transactions.index', compact('clients', 'totalIncome', 'totalPending'));
     }
 
+    public function create()
+    {
+        $clients = Client::orderBy('name')->get();
+        return view('transactions.create', compact('clients'));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -37,9 +43,42 @@ class TransactionController extends Controller
 
         Transaction::create($data);
 
-        return response()->json([
-            'message' => 'Lançamento financeiro processado e salvo!',
+        return redirect()->route('transactions.index')->with('success', 'Lançamento financeiro contabilizado no livro-caixa!');
+    }
+
+    public function edit(Transaction $transaction)
+    {
+        $clients = Client::orderBy('name')->get();
+        return view('transactions.edit', compact('transaction', 'clients'));
+    }
+
+    public function update(Request $request, Transaction $transaction)
+    {
+        $data = $request->validate([
+            'client_id' => 'nullable|exists:clients,id',
+            'amount' => 'required|numeric',
+            'type' => 'required|in:income,expense',
+            'status' => 'required|in:pending,paid',
+            'payment_method' => 'required|string',
+            'due_date' => 'nullable|date',
+            'gateway' => 'required|string'
         ]);
+
+        if ($data['status'] === 'paid' && $transaction->status !== 'paid') {
+            $data['paid_at'] = now();
+        } elseif ($data['status'] === 'pending') {
+            $data['paid_at'] = null;
+        }
+
+        $transaction->update($data);
+
+        return redirect()->route('transactions.index')->with('success', 'Lançamento modificado e reprocessado.');
+    }
+
+    public function destroy(Transaction $transaction)
+    {
+        $transaction->delete(); // SoftDeletes preserva a integridade original permitindo recuperar direto no banco.
+        return redirect()->route('transactions.index')->with('success', 'Estorno Administrativo (SoftDelete) processado no Lançamento.');
     }
 
     /**
