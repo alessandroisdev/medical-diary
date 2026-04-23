@@ -62,6 +62,7 @@ Route::middleware(['auth:collaborator'])->group(function () {
 // 4. ÁREA DO PACIENTE / CLIENTE
 Route::middleware(['auth:client'])->group(function () {
     Route::get('/portal', [\App\Http\Controllers\ClientPortalController::class, 'index'])->name('portal.index');
+    Route::get('/portal/prescriptions/{id}/download', [\App\Http\Controllers\ClientPortalController::class, 'downloadPrescription'])->name('portal.prescription.download');
     
     // API Interna do Motor de Escalas via JS FETCH
     Route::get('/api/portal/doctors', [\App\Http\Controllers\ClientPortalController::class, 'getDoctors']);

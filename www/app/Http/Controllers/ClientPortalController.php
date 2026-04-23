@@ -9,6 +9,7 @@ use App\Models\HealthInsurance;
 use App\Models\DoctorSchedule;
 use App\Models\DoctorAvailability;
 use App\Models\Appointment;
+use App\Models\Prescription;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,8 +19,20 @@ class ClientPortalController extends Controller
 {
     public function index()
     {
+        $clientId = Auth::guard('client')->id();
         $specialties = Specialty::orderBy('name')->get();
-        return view('portal', compact('specialties'));
+        
+        $appointments = Appointment::with('doctor.specialties')
+            ->where('client_id', $clientId)
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+            
+        $prescriptions = Prescription::with(['doctor', 'medicalRecord'])
+            ->where('client_id', $clientId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('portal', compact('specialties', 'appointments', 'prescriptions'));
     }
 
     public function getDoctors(Request $request)
@@ -195,5 +208,20 @@ class ClientPortalController extends Controller
             'message' => 'Sua consulta foi confirmada com sucesso! O sistema te aguarda no dia ' . Carbon::parse($data['date'])->format('d/m/Y') . ' às ' . $data['time'],
             'redirect' => route('portal.index')
         ]);
+    }
+
+    public function downloadPrescription($id)
+    {
+        $clientId = Auth::guard('client')->id();
+        
+        $prescription = Prescription::with(['medicalRecord.doctor', 'medicalRecord.client'])
+            ->where('id', $id)
+            ->where('client_id', $clientId)
+            ->firstOrFail();
+            
+        $record = $prescription->medicalRecord;
+        $isClientView = true;
+
+        return view('print.record', compact('record', 'prescription', 'isClientView'));
     }
 }

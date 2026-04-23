@@ -79,29 +79,34 @@
             </div>
         </div>
 
-        <div class="row mb-4 bg-light p-3 border rounded shadow-sm">
-            <div class="col-8"><strong>Paciente:</strong> {{ $record->client->name }}</div>
-            <div class="col-4"><strong>CPF:</strong> {{ $record->client->cpf ?? 'Não Informado' }}</div>
-            <div class="col-12 mt-2"><strong>Médico Assistente:</strong> Dr(a). {{ $record->doctor->name }} | <strong>CRM:</strong> {{ $record->doctor->crm }}</div>
-        </div>
+        @if(!isset($isClientView) || !$isClientView)
+            <div class="row mb-4 bg-light p-3 border rounded shadow-sm">
+                <div class="col-8"><strong>Paciente:</strong> {{ $record->client->name }}</div>
+                <div class="col-4"><strong>CPF:</strong> {{ $record->client->cpf ?? 'Não Informado' }}</div>
+                <div class="col-12 mt-2"><strong>Médico Assistente:</strong> Dr(a). {{ $record->doctor->name }} | <strong>CRM:</strong> {{ $record->doctor->crm }}</div>
+            </div>
 
-        <div class="section-title">REGISTRO CLÍNICO (PRONTUÁRIO)</div>
-        
-        <p><strong>Sintomatologia e Queixas:</strong></p>
-        <div class="border p-2 mb-3 bg-light rounded" style="white-space: pre-line;">
-            {{ $record->symptoms ?? 'Nenhum sintoma ou queixa preenchida.' }}
-        </div>
-        
-        <p><strong>Diagnóstico Formal / Resultado:</strong></p>
-        <p class="fs-5 text-danger fw-bold">{{ $record->diagnosis }}</p>
+            <div class="section-title">REGISTRO CLÍNICO (PRONTUÁRIO)</div>
+            
+            <p><strong>Sintomatologia e Queixas:</strong></p>
+            <div class="border p-2 mb-3 bg-light rounded" style="white-space: pre-line;">
+                {{ $record->symptoms ?? 'Nenhum sintoma ou queixa preenchida.' }}
+            </div>
+            
+            <p><strong>Diagnóstico Formal / Resultado:</strong></p>
+            <p class="fs-5 text-danger fw-bold">{{ $record->diagnosis }}</p>
 
-        <p><strong>Conduta e Plano de Tratamento:</strong></p>
-        <div class="border p-2 bg-light rounded" style="white-space: pre-line;">
-            {{ $record->treatment_plan }}
-        </div>
+            <p><strong>Conduta e Plano de Tratamento:</strong></p>
+            <div class="border p-2 bg-light rounded" style="white-space: pre-line;">
+                {{ $record->treatment_plan }}
+            </div>
+
+            @if($prescription)
+                <div style="page-break-before: always;"></div>
+            @endif
+        @endif
 
         @if($prescription)
-            <div style="page-break-before: always;"></div>
             
             <!-- Reseta cabeçalho da segunda via (Seção de Receituário) se houver -->
             <div class="header-doc d-flex justify-content-between align-items-center mt-4">
