@@ -67,6 +67,7 @@
 
 @push('scripts')
     {!! $dataTable->scripts() !!}
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
 
             // Engine Chart.js

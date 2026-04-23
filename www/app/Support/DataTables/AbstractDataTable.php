@@ -26,7 +26,7 @@ abstract class AbstractDataTable extends DataTable
             'order'        => [[0, 'desc']],
             'buttons'      => ['excel', 'csv', 'print', 'reset', 'reload'],
             'language'     => [
-                'url' => '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
+                'url' => 'https://cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
             ],
             'responsive'   => true,
             'autoWidth'    => false,
