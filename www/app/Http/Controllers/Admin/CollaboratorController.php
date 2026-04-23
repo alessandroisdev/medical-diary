@@ -16,38 +16,56 @@ class CollaboratorController extends Controller
         return $dataTable->render('admin.collaborators.index');
     }
 
+    public function create()
+    {
+        return view('admin.collaborators.create');
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:collaborators,email',
+            'email' => 'required|string|email|max:255|unique:collaborators',
             'password' => 'required|string|min:6',
         ]);
 
-        $data['password'] = Hash::make($data['password']);
-        Collaborator::create($data);
+        Collaborator::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-        return response()->json(['message' => 'Atendente cadastrado com sucesso!']);
+        return redirect()->route('collaborators.index')->with('success', 'Atendente cadastrado e habilitado ao sistema.');
+    }
+
+    public function edit(Collaborator $collaborator)
+    {
+        return view('admin.collaborators.edit', compact('collaborator'));
     }
 
     public function update(Request $request, Collaborator $collaborator)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => ['required','email', Rule::unique('collaborators')->ignore($collaborator->id)],
+            'email' => 'required|string|email|max:255|unique:collaborators,email,'.$collaborator->id,
+            'password' => 'nullable|string|min:6',
         ]);
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+        $collaborator->name = $data['name'];
+        $collaborator->email = $data['email'];
+
+        if (!empty($data['password'])) {
+            $collaborator->password = Hash::make($data['password']);
         }
 
-        $collaborator->update($data);
-        return response()->json(['message' => 'Acesso atualizado!']);
+        $collaborator->save();
+
+        return redirect()->route('collaborators.index')->with('success', 'Credenciais atualizadas com sucesso!');
     }
 
     public function destroy(Collaborator $collaborator)
     {
         $collaborator->delete();
-        return response()->json(['message' => 'Atendente destituído com sucesso.']);
+        return redirect()->route('collaborators.index')->with('success', 'Atendente destituído e bloqueado do balcão.');
     }
 }
