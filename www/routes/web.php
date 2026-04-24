@@ -87,7 +87,7 @@ Route::middleware(['auth:client'])->group(function () {
 });
 
 // TV DA RECEPÇÃO (Stream passivo público ou acessível por display TV local)
-Route::get('/painel', [AttendanceCallController::class, 'panel'])->name('attendance.tv');
+Route::view('/attendance', 'attendance.panel')->name('attendance.tv');
 Route::get('/attendance/stream', [AttendanceCallController::class, 'stream'])->name('attendance.stream');
 
 

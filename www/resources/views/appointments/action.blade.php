@@ -15,10 +15,9 @@
 
         @if($status == 'arrived' && (Auth::guard('doctor')->check() || Auth::guard('collaborator')->check()))
             <li>
-                <form action="{{ route('attendance.call', $id) }}" method="POST" class="m-0 p-0">
-                    @csrf
-                    <button type="submit" class="dropdown-item text-warning fw-bold"><i class="bi bi-megaphone-fill me-2"></i> Chamar na TV do Saguão</button>
-                </form>
+                <button type="button" class="dropdown-item text-warning fw-bold" onclick="callPatientTV('{{ $id }}', '{{ route('attendance.call', $id) }}')">
+                    <i class="bi bi-megaphone-fill me-2"></i> Chamar na TV do Saguão
+                </button>
             </li>
             <li><hr class="dropdown-divider"></li>
         @endif

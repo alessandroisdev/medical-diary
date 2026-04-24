@@ -30,4 +30,41 @@
 
 @push('scripts')
     {!! $dataTable->scripts() !!}
+    <script>
+        function callPatientTV(id, url) {
+            Swal.fire({
+                title: 'Chamar na TV',
+                input: 'text',
+                inputLabel: 'Para qual Sala/Consultório?',
+                inputPlaceholder: 'Ex: Consultório 3, Sala de Triagem',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-megaphone-fill me-1"></i> Chamar Agora',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Você precisa informar a sala!'
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Anunciando...',
+                        text: 'Aguarde, disparando no Totem.',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading() }
+                    });
+
+                    axios.post(url, { room: result.value })
+                        .then(response => {
+                            Swal.fire('Chamado com Sucesso!', response.data.message, 'success');
+                            window.LaravelDataTables["appointments-table"].ajax.reload();
+                        })
+                        .catch(error => {
+                            Swal.fire('Erro!', 'Não foi possível contatar o Totem da TV.', 'error');
+                        });
+                }
+            })
+        }
+    </script>
 @endpush
