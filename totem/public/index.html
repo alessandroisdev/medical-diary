@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totem de Senhas</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: #f1f5f9;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Remove rolagem */
+            user-select: none; /* Bloqueia seleção de texto para kiosk mode */
+        }
+        
+        .header {
+            background-color: #0f172a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 50px;
+        }
+
+        .btn-totem {
+            flex: 1;
+            height: 100%;
+            max-height: 500px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-totem:active { transform: scale(0.95); }
+
+        .btn-common {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .btn-priority {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .icon { font-size: 8rem; margin-bottom: 20px; }
+        
+        .sub { font-size: 1.5rem; font-weight: 500; opacity: 0.9; margin-top: 15px; text-align: center; padding: 0 40px;}
+        
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none; justify-content: center; align-items: center; z-index: 100;
+        }
+        
+        .spinner {
+            border: 10px solid #f3f3f3; border-top: 10px solid #3b82f6;
+            border-radius: 50%; width: 80px; height: 80px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        COMO PODEMOS LHE AJUDAR HOJE?
+    </div>
+
+    <div class="main">
+        <button class="btn-totem btn-common" onclick="requestTicket('common')">
+            <div class="icon">🎟️</div>
+            ATENDIMENTO COMUM
+            <div class="sub">Selecione esta opção para Agendamentos convencionais e Retornos.</div>
+        </button>
+
+        <button class="btn-totem btn-priority" onclick="requestTicket('priority')">
+            <div class="icon">⭐</div>
+            PREFERENCIAL
+            <div class="sub">Gestantes, Idosos +60 e Pessoas com Necessidades Especiais.</div>
+        </button>
+    </div>
+
+    <div class="loader-overlay" id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Trava clicks duplos
+        let isProcessing = false;
+
+        async function requestTicket(type) {
+            if (isProcessing) return;
+            isProcessing = true;
+            document.getElementById('loader').style.display = 'flex';
+
+            try {
+                // Post no servidor Node Local que fará o repasse -> Laravel API e Imprimirá -> USB
+                const res = await axios.post('/totem/request', { type: type });
+                const ticketNumber = res.data.ticket;
+                
+                document.getElementById('loader').style.display = 'none';
+
+                Swal.fire({
+                    title: 'Senha Impressa!',
+                    html: `Sua senha é: <br><strong style="font-size: 5rem; color: #3b82f6">${ticketNumber}</strong><br>Aguarde chamarem na tela maior.`,
+                    icon: 'success',
+                    timer: 5000, // Fecha auto em 5s pro próximo paciente
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+
+            } catch(e) {
+                document.getElementById('loader').style.display = 'none';
+                Swal.fire('Erro', 'Ocorreu uma falha de comunicação interna com o Servidor. Dirija-se ao Guichê físico.', 'error');
+            } finally {
+                setTimeout(() => { isProcessing = false; }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

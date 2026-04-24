@@ -40,7 +40,10 @@
                         <a class="nav-link" href="{{ route('appointments.index') }}">Agendamentos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('attendance.panel') }}">Controle de Senhas</a>
+                        <a class="nav-link fw-bold text-success" href="{{ route('reception.queue') }}"><i class="bi bi-ticket-perforated-fill me-1"></i> Totem Senhas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('attendance.panel') }}">TV Chamadas</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-warning fw-bold" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-1"></i>Escalas Diárias</a>
@@ -104,7 +107,17 @@
                         @endif
                         <span class="badge bg-success me-2 align-self-center">MÉDICO</span> <span class="align-self-center">{{ $doc->name }}</span>
                     @elseif(Auth::guard('collaborator')->check())
-                        <span class="badge bg-info text-dark me-2">RECEPÇÃO</span> {{ Auth::guard('collaborator')->user()->name }}
+                        @php $collab = Auth::guard('collaborator')->user(); @endphp
+                        @if($collab->current_room)
+                            <button type="button" class="btn btn-sm btn-success me-2 rounded-pill shadow-sm" onclick="promptCollaboratorRoom('{{ $collab->current_room }}')">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Guichê {{ $collab->current_room }}
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-sm btn-danger me-2 rounded-pill shadow-sm" onclick="promptCollaboratorRoom('')">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Check-in no Guichê
+                            </button>
+                        @endif
+                        <span class="badge bg-info text-dark me-2 align-self-center">RECEPÇÃO</span> <span class="align-self-center">{{ $collab->name }}</span>
                     @elseif(Auth::guard('client')->check())
                         <span class="badge bg-primary me-2">PACIENTE</span> {{ Auth::guard('client')->user()->name }}
                     @endif
@@ -150,9 +163,36 @@
                          .then(res => { window.location.reload(); })
                          .catch(e => { Swal.fire('Erro', 'Ocorreu um erro ao salvar o local', 'error'); });
                 } else if (result.isDenied) {
-                    // Clicou em sair
-                    axios.post('{{ route("doctor.room.update") }}', { room: null })
-                         .then(res => { window.location.reload(); });
+                    axios.post('{{ route("doctor.room.update") }}', { room: null }).then(res => { window.location.reload(); });
+                }
+            });
+        }
+    </script>
+    @endauth
+
+    @auth('collaborator')
+    <script>
+        function promptCollaboratorRoom(currentRoom) {
+            Swal.fire({
+                title: currentRoom ? 'Trocar de Guichê' : 'Check-In na Fila',
+                input: 'text',
+                inputValue: currentRoom,
+                inputLabel: 'Qual o Número do seu Guichê?',
+                inputPlaceholder: 'Ex: 1, 2, Triagem',
+                icon: 'info',
+                showCancelButton: true,
+                showDenyButton: currentRoom ? true : false,
+                denyButtonText: 'Sair do Guichê',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if(!result.value && !currentRoom) return; 
+                    axios.post('{{ route("collaborator.room.update") }}', { room: result.value })
+                         .then(res => { window.location.reload(); })
+                         .catch(e => { Swal.fire('Erro', 'Ocorreu um erro ao salvar', 'error'); });
+                } else if (result.isDenied) {
+                    axios.post('{{ route("collaborator.room.update") }}', { room: null }).then(res => { window.location.reload(); });
                 }
             });
         }

@@ -223,9 +223,24 @@
             const boxReady = document.getElementById('callReady');
             boxReady.classList.remove('d-none');
             
-            document.getElementById('currentClient').innerText = data.client_name;
+            // Adiciona Styling se for senha Priority
+            const clientLabel = document.getElementById('currentClient');
+            clientLabel.innerText = data.client_name;
+            
+            if (data.is_ticket) {
+                if(data.ticket_type === 'priority') {
+                    clientLabel.style.color = '#fbbf24'; // Warning yellow
+                } else {
+                    clientLabel.style.color = 'var(--text-main)';
+                }
+                document.getElementById('currentDoctor').style.display = 'none';
+            } else {
+                clientLabel.style.color = 'var(--text-main)';
+                document.getElementById('currentDoctor').style.display = 'inline';
+                document.getElementById('currentDoctor').innerText = data.doctor_name;
+            }
+
             document.getElementById('currentRoom').innerText = data.room;
-            document.getElementById('currentDoctor').innerText = data.doctor_name;
 
             // Roda as animações pular / piscar
             boxReady.classList.remove('animate-pop');
@@ -236,8 +251,27 @@
             pulseFx.style.display = 'block';
             setTimeout(() => { pulseFx.style.display = 'none'; }, 6000); // Pisca por 6s e depois para
 
+            // Texto dinâmico de áudio
+            let speakContent = '';
+            if (data.is_ticket) {
+                // Quebrar "Senha P001" p/ robô falar as letras separadas e audíveis
+                let spokenName = data.client_name.replace('Senha ', 'Senha: ');
+                speakContent = `Atenção. ${spokenName}. Dirigir-se ao: ${data.room}.`;
+            } else {
+                speakContent = `Atenção, paciente: ${data.client_name}. Comparecer à: ${data.room}.`;
+            }
+
             // Toca Sons
-            speakAlert(data.client_name, data.room);
+            dingAudio.play().catch(e => console.log('Autoplay audio blocked by browser policies until clicked first.'));
+            
+            if ('speechSynthesis' in window) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(speakContent);
+                    utterance.lang = 'pt-BR';
+                    utterance.rate = 0.85; 
+                    window.speechSynthesis.speak(utterance);
+                }, 1000);
+            }
             
         });
 

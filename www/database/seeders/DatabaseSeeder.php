@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
         // Configurações Globais Iniciais
         $defaultSettings = [
             // Categoria Logistica
+            ['key' => 'ticket_ratio_priority', 'label' => '[Logística Filas] Peso da Senha Preferencial (Qtd Senhas por Ciclo)', 'value' => '2'],
+            ['key' => 'ticket_ratio_common', 'label' => '[Logística Filas] Peso da Senha Comum (Qtd Senhas por Ciclo)', 'value' => '1'],
             ['key' => 'cancellation_tolerance_hours', 'label' => '[Logística] Tolerância (Horas) para Cancelamento Paciente', 'value' => '24'],
             ['key' => 'contact_email', 'label' => '[Contato] E-mail Comercial (Recebe os contatos do site)', 'value' => 'comercial@medical.diary'],
             ['key' => 'contact_phone', 'label' => '[Contato] Telefone/WhatsApp Principal', 'value' => '(11) 4002-8922'],

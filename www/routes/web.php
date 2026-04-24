@@ -72,7 +72,17 @@ Route::middleware(['auth:collaborator,doctor'])->group(function () {
 Route::middleware(['auth:collaborator'])->group(function () {
     Route::resource('appointments', AppointmentController::class)->except(['index']);
     Route::post('/appointments/{appointment}/checkin', [AppointmentController::class, 'checkIn'])->name('appointments.checkin');
+    
+    Route::post('/collaborator/room', [App\Http\Controllers\DoctorRoomController::class, 'updateCollaborator'])->name('collaborator.room.update');
+
+    // Módulo de Fila Totem
+    Route::get('/reception/queue', [App\Http\Controllers\TicketQueueController::class, 'index'])->name('reception.queue');
+    Route::post('/reception/queue/call', [App\Http\Controllers\TicketQueueController::class, 'callNext'])->name('reception.queue.call');
+    Route::patch('/reception/tickets/{ticket}/finish', [App\Http\Controllers\TicketQueueController::class, 'finish'])->name('reception.ticket.finish');
 });
+
+// API DO TOTEM (Acesso Livro Localhost)
+Route::post('/api/tickets/generate', [App\Http\Controllers\TicketQueueController::class, 'generate']);
 
 // 4. ÁREA DO PACIENTE / CLIENTE
 Route::middleware(['auth:client'])->group(function () {
