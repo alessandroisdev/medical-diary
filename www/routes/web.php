@@ -20,12 +20,19 @@ Route::get('/contato', [\App\Http\Controllers\PublicSiteController::class, 'cont
 Route::post('/contato', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store')->middleware('throttle:5,1');
 
 // Autenticação
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/login', [LoginController::class, 'showClientLogin'])->name('login');
+Route::get('/recepcao/login', [LoginController::class, 'showCollaboratorLogin'])->name('login.collaborator');
+Route::get('/medico/login', [LoginController::class, 'showDoctorLogin'])->name('login.doctor');
+Route::get('/admin/login', [LoginController::class, 'showAdminLogin'])->name('login.admin');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Portal de Tutoriais (Redirecionador Global)
+Route::get('/ajuda', [App\Http\Controllers\HelpDeskController::class, 'index'])->name('help.generic');
+
 // 1. ÁREA ADMINISTRATIVA (Financeiro e RH Corporativo)
 Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/help-desk', [App\Http\Controllers\HelpDeskController::class, 'admin'])->name('help.admin');
     // Financeiro
     Route::get('/transactions/metrics', [TransactionController::class, 'metrics'])->name('transactions.metrics');
     Route::resource('transactions', TransactionController::class)->except(['show']);
@@ -57,6 +64,7 @@ Route::middleware(['auth:admin,collaborator'])->group(function() {
 
 // 2. ÁREA MÉDICA (Prontuários e Impressão)
 Route::middleware(['auth:doctor'])->group(function () {
+    Route::get('/help-center', [App\Http\Controllers\HelpDeskController::class, 'doctor'])->name('help.doctor');
     Route::resource('records', MedicalRecordController::class)->except(['show', 'destroy']);
     Route::get('/prescriptions/{id}/print', [App\Http\Controllers\PrintRecordController::class, 'printDocument'])->name('print.document');
     Route::post('/doctor/room', [App\Http\Controllers\DoctorRoomController::class, 'update'])->name('doctor.room.update');
@@ -70,6 +78,7 @@ Route::middleware(['auth:collaborator,doctor'])->group(function () {
 });
 
 Route::middleware(['auth:collaborator'])->group(function () {
+    Route::get('/help', [App\Http\Controllers\HelpDeskController::class, 'collaborator'])->name('help.collaborator');
     Route::resource('appointments', AppointmentController::class)->except(['index']);
     Route::post('/appointments/{appointment}/checkin', [AppointmentController::class, 'checkIn'])->name('appointments.checkin');
     
@@ -87,6 +96,7 @@ Route::post('/api/tickets/generate', [App\Http\Controllers\TicketQueueController
 
 // 4. ÁREA DO PACIENTE / CLIENTE
 Route::middleware(['auth:client'])->group(function () {
+    Route::get('/faq', [App\Http\Controllers\HelpDeskController::class, 'client'])->name('help.client');
     Route::get('/portal', [\App\Http\Controllers\ClientPortalController::class, 'index'])->name('portal.index');
     Route::get('/portal/prescriptions/{id}/download', [\App\Http\Controllers\ClientPortalController::class, 'downloadPrescription'])->name('portal.prescription.download');
     Route::post('/portal/appointments/{id}/cancel', [\App\Http\Controllers\ClientPortalController::class, 'cancelAppointment'])->name('portal.appointment.cancel');

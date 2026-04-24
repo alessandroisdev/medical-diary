@@ -41,29 +41,14 @@
 
     <div class="login-box border-top border-primary border-4">
         <h3 class="text-center fw-bold mb-1"><i class="bi bi-heart-pulse-fill text-primary"></i> Medical Diary</h3>
-        <p class="text-center text-muted mb-4">Plataforma de Gestão Clínica</p>
+        <p class="text-center text-muted mb-4">{{ $title ?? 'Plataforma de Gestão Clínica' }}</p>
 
-        <ul class="nav nav-pills justify-content-center mb-4" id="loginTabs">
-            <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="pill" data-guard="collaborator" data-bs-target="#loginFormBox">Recepção</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="pill" data-guard="doctor" data-bs-target="#loginFormBox">Médico</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="pill" data-guard="admin" data-bs-target="#loginFormBox">Admin</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="pill" data-guard="client" data-bs-target="#loginFormBox">Paciente</button>
-            </li>
-        </ul>
-
-        <div class="tab-content" id="loginFormBox">
-            <div class="tab-pane fade show active">
+        <div id="loginFormBox">
+            <div class="px-2">
                 <form action="{{ route('login.post') }}" method="POST" id="authForm">
                     @csrf
-                    <!-- Guard Dinâmico -->
-                    <input type="hidden" name="guard" id="selectedGuard" value="collaborator">
+                    <!-- Guard Input Fixo pela URI -->
+                    <input type="hidden" name="guard" id="selectedGuard" value="{{ $guard ?? 'client' }}">
 
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold text-uppercase">Email de Acesso</label>
@@ -89,26 +74,8 @@
         </div>
     </div>
 
-    <!-- Script de alteração de contexto visual -->
+    <!-- Script de submissão -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabs = document.querySelectorAll('#loginTabs button');
-            const guardInput = document.getElementById('selectedGuard');
-            const authForm = document.getElementById('authForm');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function(e) {
-                    guardInput.value = e.target.getAttribute('data-guard');
-                });
-            });
-
-            // Tratamento de redirect pós login no typescript nativo acionado pelo success
-            authForm.addEventListener('submit', () => {
-                // Aguarda nossa engine do app.ts processar o request XHR.
-                // Como app.ts é burro nesse sentido, precisamos de um evento mais limpo ou poll.
-                // Re-escrevemos o XHR submit apenas pro login par ter o redirect na hora:
-            });
-        });
 
         // Configuração pontual pro XHR do Login caso aprovado
         window.addEventListener('load', function() {
@@ -132,8 +99,12 @@
                             btn.disabled = false;
                             btn.innerHTML = btn.getAttribute('data-original-text');
                             
-                            // Chama toast (já importado pelo bootstrap se quisessemos ou via alert genérico pq barramos app.ts)
-                            alert(err.response?.data?.message || 'Falha na autenticação.');
+                            // Chama sweet alert visual
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro ao Acessar',
+                                text: err.response?.data?.message || 'Falha na autenticação.',
+                            });
                         });
                     
                     return false;

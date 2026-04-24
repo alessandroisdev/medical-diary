@@ -34,60 +34,60 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navItems">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
                     @auth('collaborator')
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('appointments.index') }}">Agendamentos</a>
+                        <a class="nav-link text-white" href="{{ route('appointments.index') }}"><i class="bi bi-calendar-check me-1"></i> O.S. (Agendamentos)</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold text-success" href="{{ route('reception.queue') }}"><i class="bi bi-ticket-perforated-fill me-1"></i> Totem Senhas</a>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link text-white fw-bold" href="{{ route('reception.queue') }}"><i class="bi bi-ticket-perforated-fill text-warning me-1"></i> Totem Recepção</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('attendance.panel') }}">TV Chamadas</a>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link text-white" href="{{ route('attendance.panel') }}" target="_blank"><i class="bi bi-display me-1"></i> TV Salão</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-1"></i>Escalas Diárias</a>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link text-white fw-bold" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range text-info me-1"></i> Monitor. Escalas</a>
                     </li>
                     @endauth
 
                     @auth('admin')
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Financeiro Geral</a>
+                        <a class="nav-link text-white" href="{{ route('transactions.index') }}"><i class="bi bi-cash-coin me-1"></i> DRE Financeiro</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-info fw-bold" href="{{ route('inbox.index') }}"><i class="bi bi-inbox-fill me-1"></i> Inbox do Site</a>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link text-white fw-bold" href="{{ route('inbox.index') }}"><i class="bi bi-headset text-warning me-1"></i> Contato Site</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="rhDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-people-fill me-1"></i> Gestão e RH
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="rhDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-diagram-3-fill me-1"></i> ERP Clinica
                         </a>
                         <ul class="dropdown-menu shadow-sm" aria-labelledby="rhDropdown">
-                            <li><a class="dropdown-item" href="{{ route('doctors.index') }}"><i class="bi bi-person-heart me-2"></i>Corpo Clínico (Médicos)</a></li>
-                            <li><a class="dropdown-item" href="{{ route('collaborators.index') }}"><i class="bi bi-person-badge me-2"></i>Recepção (Atendentes)</a></li>
+                            <li><a class="dropdown-item" href="{{ route('doctors.index') }}"><i class="bi bi-person-heart me-2 text-primary"></i>Corpo Clínico (Médicos)</a></li>
+                            <li><a class="dropdown-item" href="{{ route('collaborators.index') }}"><i class="bi bi-person-badge me-2 text-primary"></i>Recepção (Atendentes)</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Estrutura Clínico-Financeira</h6></li>
+                            <li><h6 class="dropdown-header">Estrutura de Mercado</h6></li>
                             <li><a class="dropdown-item" href="{{ route('specialties.index') }}"><i class="bi bi-tags me-2 text-warning"></i>Especialidades Clínicas</a></li>
                             <li><a class="dropdown-item" href="{{ route('health-insurances.index') }}"><i class="bi bi-shield-check me-2 text-success"></i>Convênios / Acordos</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-2 text-danger"></i>Escala e Agendas Médico</a></li>
+                            <li><a class="dropdown-item" href="{{ route('schedules.index') }}"><i class="bi bi-calendar-range me-2 text-danger"></i>Relatório Escalas Médicas</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-secondary fw-bold" href="{{ route('settings.index') }}"><i class="bi bi-gear-fill me-2"></i>Configurações Globais</a></li>
+                            <li><a class="dropdown-item text-secondary fw-bold" href="{{ route('settings.index') }}"><i class="bi bi-gear-fill me-2"></i>Configurações Mestre</a></li>
                         </ul>
                     </li>
                     @endauth
 
                     @auth('doctor')
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{{ route('records.index') }}"><i class="bi bi-file-medical-fill me-1"></i>Prontuário Médico</a>
+                        <a class="nav-link text-white fw-bold" href="{{ route('records.index') }}"><i class="bi bi-file-medical-fill text-info me-1"></i> Prontuário Pacientes</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('appointments.index') }}"><i class="bi bi-person-lines-fill me-1"></i>Minha Fila de Hoje</a>
+                    <li class="nav-item ms-lg-2">
+                        <a class="nav-link text-white" href="{{ route('appointments.index') }}"><i class="bi bi-person-lines-fill text-warning me-1"></i> Fila Operacional (Hoje)</a>
                     </li>
                     @endauth
                     
                     @auth('client')
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('portal.index') }}">Meu Portal</a>
+                        <a class="nav-link text-white" href="{{ route('portal.index') }}"><i class="bi bi-person-vcard text-info me-1"></i> Meu Portal SaaS</a>
                     </li>
                     @endauth
                 </ul>
@@ -122,7 +122,11 @@
                         <span class="badge bg-primary me-2">PACIENTE</span> {{ Auth::guard('client')->user()->name }}
                     @endif
                     
-                    <form action="{{ route('logout') }}" method="POST" class="no-ajax ms-3 m-0 p-0">
+                    <a href="{{ route('help.generic') }}" class="btn btn-sm btn-info text-dark fw-bold ms-3" title="Base de Conhecimento">
+                        <i class="bi bi-question-circle-fill me-1"></i> Ajuda
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST" class="no-ajax ms-2 m-0 p-0">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right"></i> Sair</button>
                     </form>

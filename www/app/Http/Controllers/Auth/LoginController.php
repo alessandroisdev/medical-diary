@@ -24,19 +24,12 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * Exibe o formulário único com multi-abas para o login.
-     *
-     * @OA\Get(
-     *     path="/login",
-     *     tags={"Auth"},
-     *     summary="Display multi-guard login interface",
-     *     @OA\Response(response=200, description="Login page rendered")
-     * )
+     * Exibe o formulário estático para cada nivel de Acesso
      */
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
+    public function showClientLogin() { return view('auth.login', ['guard' => 'client', 'title' => 'Portal do Paciente']); }
+    public function showCollaboratorLogin() { return view('auth.login', ['guard' => 'collaborator', 'title' => 'Recepção (Staff)']); }
+    public function showDoctorLogin() { return view('auth.login', ['guard' => 'doctor', 'title' => 'Acesso Médico']); }
+    public function showAdminLogin() { return view('auth.login', ['guard' => 'admin', 'title' => 'Acesso Administrativo (ERP)']); }
 
     /**
      * Processa a autenticação dinamicamente baseado na origem (guard)

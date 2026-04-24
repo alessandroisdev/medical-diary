@@ -74,6 +74,13 @@
                     <a href="{{ $settings['social_instagram'] }}" class="text-white opacity-75"><i class="bi bi-instagram fs-5"></i></a>
                 @endif
              </div>
+             
+             <!-- Links Isolados de Autenticação da Clínica (Fase 21) -->
+             <div class="d-flex justify-content-center gap-4 mt-3 small">
+                <a href="{{ route('login.collaborator') }}" class="text-white-50 text-decoration-none hover-white"><i class="bi bi-pc-display-horizontal me-1"></i>Acesso Recepção</a>
+                <a href="{{ route('login.doctor') }}" class="text-white-50 text-decoration-none hover-white"><i class="bi bi-heart-pulse me-1"></i>Acesso Médico</a>
+                <a href="{{ route('login.admin') }}" class="text-white-50 text-decoration-none hover-white"><i class="bi bi-shield-lock me-1"></i>Acesso Administrativo</a>
+             </div>
         </div>
     </footer>
 

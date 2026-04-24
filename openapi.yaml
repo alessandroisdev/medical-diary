@@ -11,7 +11,6 @@ paths:
     post:
       summary: Envia uma requisição de Sac/Contato vindo do Site Institucional
       operationId: sendContactForm
-      description: 'Salva os dados criptografados para fila inbox e despacha email (ShouldQueue).'
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -36,15 +35,35 @@ paths:
       responses:
         '200':
           description: Formulário guardado e e-mail posicionado na fila oculta.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
         '429':
           description: Throttling Too Many Requests (Anti DDoS, 5 max/minuto)
+  /login:
+    post:
+      summary: Ponto de entrada dinâmico de Login (Formulário Misto)
+      description: 'A URL responde dinamicamente à variável guard disparada invisivelmente. As views visuais de leitura ficam nos atalhos isolados: /login, /medico/login, /recepcao/login e /admin/login.'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - guard
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                guard:
+                  type: string
+                  enum: [client, admin, doctor, collaborator]
+      responses:
+        '200':
+          description: JSON contendo Auth Key em Server Session e URL de redirect.
+        '401':
+          description: Erro de credencial.
   /api/appointments/available-times:
     get:
       summary: Retorna Grid de janelas Matemáticas livres no dia
