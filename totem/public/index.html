@@ -211,6 +211,67 @@
                 setTimeout(() => { isProcessing = false; }, 3000);
             }
         }
+        
+        // ------ EASTER EGG: Painel Administrativo de Hardware ------
+        document.addEventListener('keydown', async (e) => {
+            // Tecla secreta: Ctrl + Alt + P (P = Printer)
+            if (e.ctrlKey && e.altKey && (e.key === 'p' || e.key === 'P')) {
+                e.preventDefault();
+                
+                // 1. Puxa config atual
+                let currentConfig = { printer_name: '', is_production: false };
+                try {
+                    const resConfig = await axios.get('/totem/config');
+                    if(resConfig.data) currentConfig = resConfig.data;
+                } catch(e) { console.warn("Aba config vazia, usando default"); }
+
+                // 2. Abre Modal Oculto
+                const { value: formValues } = await Swal.fire({
+                    title: 'Configuração Física (Hardware)',
+                    html: `
+                        <div style="text-align: left; padding: 10px;">
+                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Nome exato do Driver no Windows (Ex: EPSON TM-T20X Receipt)</label>
+                            <input id="swal-input1" class="swal2-input" value="${currentConfig.printer_name}" style="width: 90%; margin: 0 auto 20px;">
+                            
+                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Modo de Impressão</label>
+                            <select id="swal-input2" class="swal2-input" style="width: 90%; margin: 0 auto;">
+                                <option value="false" ${!currentConfig.is_production || currentConfig.is_production==='false' ? 'selected' : ''}>[DEV] Desligado (Apenas Console)</option>
+                                <option value="true" ${(currentConfig.is_production===true || currentConfig.is_production==='true') ? 'selected' : ''}>[PROD] Ligado (Imprime Físico USB/LAN)</option>
+                            </select>
+                        </div>
+                    `,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Gravar na Placa',
+                    cancelButtonText: 'Sair e Ignorar',
+                    allowOutsideClick: false,
+                    background: '#0f172a',
+                    preConfirm: () => {
+                        return {
+                            printer_name: document.getElementById('swal-input1').value,
+                            is_production: document.getElementById('swal-input2').value === 'true'
+                        }
+                    }
+                });
+
+                if (formValues) {
+                    // 3. Salva nativamente
+                    try {
+                        const res = await axios.post('/totem/config', formValues);
+                        Swal.fire({ 
+                            icon: 'success', 
+                            title: 'Sucesso', 
+                            text: res.data.message, 
+                            timer: 2500, 
+                            showConfirmButton: false,
+                            background: '#0f172a' 
+                        });
+                    } catch(err) {
+                        Swal.fire('Erro Operacional', 'O Node.js backend não aceitou a gravação. Verifique permissões.', 'error');
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>

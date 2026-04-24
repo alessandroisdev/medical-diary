@@ -42,7 +42,10 @@
 
                 <div class="alert alert-dark">
                     <h6 class="fw-bold text-info"><i class="bi bi-receipt me-1"></i> URL do Totem de Impressão Node.Js</h6>
-                    <p class="mb-2 small">O Totem (Aparelho do papelito) **não** acessa a porta 8084 do Laravel. Ele é um Node.JS isolado rodando pela linha de comando no Windows da recepção para ter acesso irrestrito à porta USB sem pedir "Deseja Imprimir?":</p>
+                    <p class="mb-2 small">
+                        O Totem (Aparelho do papel) roda isolado do Laravel via Node.js.<br/>
+                        <strong class="text-white"><i class="bi bi-keyboard text-warning"></i> Painel de Configuração Oculto:</strong> Para conectar e gravar o nome da Impressora de Papel do Windows no sistema local, vá até o Computador do Totem e pressione a combinação secreta <code class="bg-dark text-warning">Ctrl + Alt + P</code> no teclado. Um menu saltará na tela permitindo salvar nativamente.
+                    </p>
                     <div class="input-group">
                         <input type="text" class="form-control bg-light" id="totemUrl" value="{{ preg_replace('/:[0-9]+$/', '', request()->getSchemeAndHttpHost()) }}:8085" readonly>
                         <button class="btn btn-secondary no-print" type="button" onclick="copyToClipboard('totemUrl', this)"><i class="bi bi-clipboard"></i> Copiar</button>

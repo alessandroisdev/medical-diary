@@ -5,16 +5,39 @@ const path = require('path');
 const ThermalPrinter = require("node-thermal-printer").printer;
 const PrinterTypes = require("node-thermal-printer").types;
 
+const fs = require('fs');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuração do Ambiente. Deve bater na API do Laravel exposta no Docker
+// Configuração do Ambiente
 const LARAVEL_API_URL = process.env.LARAVEL_API_URL || 'http://localhost:8084/api/tickets/generate';
-const PRINTER_NAME = process.env.PRINTER_NAME || 'Comum_Impressora_Ficticia'; 
-// OBS: Em Produção no Windows, instalar a impressora e passar o nome da fila dela acima. Substituir por ex: '\\\\localhost\\EPSON_TM_T20'
-const IS_PRODUCTION = false; // Mude para true para tentar imprimir nativamente no C++ bindings do windows
+const CONFIG_FILE = path.join(__dirname, 'hardware_config.json');
+
+// Lê configurações locais ou retorna chaves padrão
+function loadConfig() {
+    if (fs.existsSync(CONFIG_FILE)) {
+        try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')); } 
+        catch (e) { console.error("Erro lendo json:", e); }
+    }
+    return { printer_name: 'Comum_Impressora_Ficticia', is_production: false };
+}
+
+// Persiste no Cofre JSON local
+function saveConfig(data) {
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(data, null, 4), 'utf8');
+}
+
+// Endpoints Administrativos Ocultos
+app.get('/totem/config', (req, res) => { res.json(loadConfig()); });
+app.post('/totem/config', (req, res) => {
+    const current = loadConfig();
+    const newData = { ...current, ...req.body };
+    saveConfig(newData);
+    res.json({ success: true, message: 'Configurações Vivas Salvas!' });
+});
 
 app.post('/totem/request', async (req, res) => {
     try {
@@ -35,14 +58,16 @@ app.post('/totem/request', async (req, res) => {
 });
 
 async function printTicket(ticketStr, typeStr) {
-    if (!IS_PRODUCTION) {
-        console.log(`[DEV MODE] Imprimindo MOCK no Totem: Senha ${ticketStr} (${typeStr})`);
+    const sysData = loadConfig();
+
+    if (!sysData.is_production || sysData.is_production === 'false') {
+        console.log(`[DEV MODE] Imprimindo MOCK no Totem: Senha ${ticketStr} (${typeStr}) [Driver: ${sysData.printer_name}]`);
         return;
     }
 
     let printer = new ThermalPrinter({
         type: PrinterTypes.EPSON,
-        interface: 'printer:' + PRINTER_NAME, 
+        interface: 'printer:' + sysData.printer_name, 
         characterSet: 'PC858_EURO', // Letras com acento (pt-br)
         removeSpecialCharacters: false,
     });

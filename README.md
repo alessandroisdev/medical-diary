@@ -49,7 +49,7 @@ Ao subir os containers no Docker (`localhost:8084`), o projeto fragmenta-se ness
 | **Página de Contato Segura** | `/contato` | Formulário seguro contra DDoS que envia e-mails em fila *ShouldQueue* para a clínica. | Nenhuma |
 | **Autenticadores ERP** | `/login`, `/admin/login`, etc | Portas de entradas físicas e independentes, protegidas por Guards específicos contra esgotamento de sessão multipla. | Isolada |
 | **Painel de Atendimento Total (TV)** | `/attendance` | Display estético Full HD focado para televisores na recepção do prédio. Atualiza via Server Sent Events (`SSE`) quando os médicos ou a Módulo da Fila chamam alguém no painel. | Nenhuma |
-| **Microserviço: TV Totem Hardware** | `(Acesso: :8085)` | Frontend Kiosk UI de alto impacto visual (Glassmorphism e Neumorphism) atrelado diretamente ao Spooler C++ de Impressão Térmica via Node.JS puro. Hospedado na pasta raiz `/totem`. | Nenhuma |
+| **Microserviço: TV Totem Hardware** | `(Acesso: :8085)` | Frontend Kiosk UI de alto impacto atrelado diretamente ao Spooler C++ de Impressão Térmica via Node. Possui Painel Master Oculto de Hardware no navegador (`Ctrl`+`Alt`+`P`). | Nenhuma |
 | **Estação Guichê (Senhas)** | `/reception/queue` | Motor de ordenamento logístico. Avalia matematicamente filas comuns e prioritárias e empurra na métrica correta com 1-click caller. | `auth:collaborator` |
 | **Agenda Inteligente (Self-Booking)** | `(Logado como Cliente)` | Sistema vivo onde o paciente subtrai agendas e compra um horário cirurgicamente bloqueado pelo motor Matemático. | `auth:client` |
 | **CMS Global Settings** | `(Logado como Admin)` | Módulo responsável por editar métricas da fila (Ticket Ratio) ou editar SMTP dinâmico até trocar Textos e Logísticas do Site. | `auth:admin` |
