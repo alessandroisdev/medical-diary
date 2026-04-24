@@ -48,6 +48,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('transactions.index') }}">Financeiro Geral</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-info fw-bold" href="{{ route('inbox.index') }}"><i class="bi bi-inbox-fill me-1"></i> Inbox do Site</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="rhDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-people-fill me-1"></i> Gestão e RH

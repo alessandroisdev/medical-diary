@@ -12,8 +12,13 @@ use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\CollaboratorController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $doctors = App\Models\Doctor::with('specialties')->get();
+    $specialties = App\Models\Specialty::all();
+    $settings = App\Models\Setting::pluck('value', 'key')->toArray();
+    return view('welcome', compact('doctors', 'specialties', 'settings'));
 })->name('home');
+
+Route::post('/contato', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store')->middleware('throttle:5,1');
 
 // Autenticação
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -37,6 +42,12 @@ Route::middleware(['auth:admin'])->group(function () {
     // Configurações Globais
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // CRM Inbox do Site
+    Route::get('/inbox', [\App\Http\Controllers\Admin\InboxController::class, 'index'])->name('inbox.index');
+    Route::get('/inbox/{id}', [\App\Http\Controllers\Admin\InboxController::class, 'show'])->name('inbox.show');
+    Route::patch('/inbox/{id}/reply', [\App\Http\Controllers\Admin\InboxController::class, 'markReplied'])->name('inbox.reply');
+    Route::delete('/inbox/{id}', [\App\Http\Controllers\Admin\InboxController::class, 'destroy'])->name('inbox.destroy');
 });
 
 // Acesso Misto (Admin + Atendente)

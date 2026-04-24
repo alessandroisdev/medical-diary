@@ -20,11 +20,23 @@ class DatabaseSeeder extends Seeder
         $password = Hash::make('password');
 
         // Configurações Globais Iniciais
-        \App\Models\Setting::create([
-            'key' => 'cancellation_tolerance_hours',
-            'label' => 'Tolerância Mínima para Cancelamento pelo Paciente (Horas)',
-            'value' => '24', // 1 Dia de antecedência padrão
-        ]);
+        $defaultSettings = [
+            ['key' => 'cancellation_tolerance_hours', 'label' => 'Tolerância (Horas) para Cancelamento Paciente', 'value' => '24'],
+            ['key' => 'contact_email', 'label' => 'E-mail Comercial (Recebe os contatos do site)', 'value' => 'comercial@medical.diary'],
+            ['key' => 'contact_phone', 'label' => 'Telefone/WhatsApp Principal', 'value' => '(11) 4002-8922'],
+            ['key' => 'clinic_address', 'label' => 'Endereço Completo', 'value' => 'Avenida Paulista, 1000 - Bela Vista, SP'],
+            ['key' => 'map_iframe_url', 'label' => 'URL do Mapa (Google Maps Embed)', 'value' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1432420935515!2d-46.65593888502227!3d-23.563319084681643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr'],
+            ['key' => 'social_instagram', 'label' => 'Link do Instagram', 'value' => 'https://instagram.com/medicaldiary'],
+            ['key' => 'smtp_host', 'label' => 'SMTP Host', 'value' => 'smtp.mailtrap.io'],
+            ['key' => 'smtp_port', 'label' => 'SMTP Porta', 'value' => '2525'],
+            ['key' => 'smtp_username', 'label' => 'SMTP Usuário', 'value' => 'd2f8...'],
+            ['key' => 'smtp_password', 'label' => 'SMTP Senha', 'value' => '12345'],
+            ['key' => 'smtp_encryption', 'label' => 'SMTP Criptografia (tls, ssl)', 'value' => 'tls'],
+        ];
+
+        foreach ($defaultSettings as $s) {
+            \App\Models\Setting::updateOrCreate(['key' => $s['key']], $s);
+        }
 
         // Admin
         User::create([
