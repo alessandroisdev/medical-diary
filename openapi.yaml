@@ -1,0 +1,88 @@
+openapi: 3.0.3
+info:
+  title: Medical Diary Plataforms API
+  description: Public Endpoints and Internal Services API definition for Medical Diary Ecosystem
+  version: 1.0.0
+servers:
+  - url: http://localhost:8084/
+    description: Local Docker Enviroment
+paths:
+  /contato:
+    post:
+      summary: Envia uma requisição de Sac/Contato vindo do Site Institucional
+      operationId: sendContactForm
+      description: 'Salva os dados criptografados para fila inbox e despacha email (ShouldQueue).'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - message
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                subject:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Formulário guardado e e-mail posicionado na fila oculta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '429':
+          description: Throttling Too Many Requests (Anti DDoS, 5 max/minuto)
+  /api/appointments/available-times:
+    get:
+      summary: Retorna Grid de janelas Matemáticas livres no dia
+      operationId: getAvailableTimes
+      description: Verifica agendamentos já alocados, cruza com o array DoctorSchedules (Licenças e Plantões) e cospe janelas reais pra agendamento.
+      parameters:
+        - name: doctor_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: date
+          in: query
+          required: true
+          description: 'Data no formato YYYY-MM-DD'
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Array de horas livres.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: '14:30'
+  /attendance/next:
+    get:
+      summary: TV Toten de Chamadas - Server Sent Events (SSE)
+      description: Endpoint escutado eternamente por EventSource.php no Front da TV.
+      responses:
+        200:
+          description: Stream Event response contendo dados do paciente atual.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: "data: {'status': 'arrived', 'client_name': 'João'}\n\n"

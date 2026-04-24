@@ -37,3 +37,19 @@ O comando de seed gera massa de dados e cria usuários curingas fixos, com a sen
 - **Médico**: `doctor@medical.diary` na aba "Médico"
 - **Atendente**: `collaborator@medical.diary` na aba "Recepção"
 - **Paciente**: `client@medical.diary` na aba "Paciente"
+
+## Mapa de URLs (Ecossistema Público e Privado)
+
+Ao subir os containers no Docker (`localhost:8084`), o projeto fragmenta-se nesses macro-sistemas acessíveis navegando via URL:
+
+| Aplicação | Rota HTTP | Descrição do Módulo | Autenticação |
+| :--- | :--- | :--- | :--- |
+| **Site Institucional (CMS)** | `/` | Portal público (Home, Equipe, Especialidades, Infra). Baseado em CMS Dinâmico injetado via painel. | Nenhuma |
+| **Página de Contato Segura** | `/contato` | Formulário seguro contra DDoS que envia e-mails em fila *ShouldQueue* para a clínica. | Nenhuma |
+| **Área Privada (Login Universal)** | `/login` | Porta de entrada mágica inteligente. Após o login, redireciona de acordo com o guard (Admin vs Doctor vs Client). | Múltiplas |
+| **Painel de Atendimento Total (TV)** | `/attendance` | Display estético Full HD focado para televisores na recepção do prédio. Atualiza via Server Sent Events (`SSE`) quando os médicos chamam no painel. | Nenhuma |
+| **Agenda Inteligente (Self-Booking)** | `(Logado como Cliente)` | Sistema vivo onde o paciente subtrai agendas e compra um horário cirurgicamente bloqueado pelo motor Matemático. | `auth:client` |
+| **CMS Global Settings** | `(Logado como Admin)` | Aba 'Configurações Globais'. Módulo responsável por editar desde SMTP dinâmico (trocar de serviço em real-time) até trocar Titulão, Textos e Logísticas do Site Institucional. | `auth:admin` |
+| **CRM de SAC (Inbox)** | `(Dentro do Admin)` | Fila administrativa que guarda as threads de formulários enviados da HomePage, podendo deletar organicamente por UUID via Eloquent. | `auth:admin` |
+
+*OBS: O Arquivo Documental `openapi.yaml` atrelado neste repositório descreve alguns os Endpoints mais técnicos e complexos da plataforma.*
