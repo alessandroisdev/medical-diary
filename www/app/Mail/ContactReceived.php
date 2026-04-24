@@ -9,7 +9,6 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\ContactMessage;
 
 class ContactReceived extends Mailable implements ShouldQueue

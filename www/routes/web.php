@@ -11,12 +11,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\CollaboratorController;
 
-Route::get('/', function () {
-    $doctors = App\Models\Doctor::with('specialties')->get();
-    $specialties = App\Models\Specialty::all();
-    $settings = App\Models\Setting::pluck('value', 'key')->toArray();
-    return view('welcome', compact('doctors', 'specialties', 'settings'));
-})->name('home');
+Route::get('/', [\App\Http\Controllers\PublicSiteController::class, 'home'])->name('home');
+Route::get('/sobre', [\App\Http\Controllers\PublicSiteController::class, 'about'])->name('public.about');
+Route::get('/especialidades', [\App\Http\Controllers\PublicSiteController::class, 'specialties'])->name('public.specialties');
+Route::get('/equipe', [\App\Http\Controllers\PublicSiteController::class, 'doctors'])->name('public.doctors');
+Route::get('/contato', [\App\Http\Controllers\PublicSiteController::class, 'contact'])->name('public.contact');
 
 Route::post('/contato', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store')->middleware('throttle:5,1');
 

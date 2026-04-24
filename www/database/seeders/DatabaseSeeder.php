@@ -142,5 +142,10 @@ class DatabaseSeeder extends Seeder
                 'paid_at' => Carbon::now()->subDays($faker->numberBetween(1, 10)),
             ]);
         }
+
+        // External Seeders
+        $this->call([
+            \Database\Seeders\SpecialtySeeder::class,
+        ]);
     }
 }
