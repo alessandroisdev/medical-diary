@@ -59,6 +59,7 @@ Route::middleware(['auth:admin,collaborator'])->group(function() {
 Route::middleware(['auth:doctor'])->group(function () {
     Route::resource('records', MedicalRecordController::class)->except(['show', 'destroy']);
     Route::get('/prescriptions/{id}/print', [App\Http\Controllers\PrintRecordController::class, 'printDocument'])->name('print.document');
+    Route::post('/doctor/room', [App\Http\Controllers\DoctorRoomController::class, 'update'])->name('doctor.room.update');
 });
 
 // 3. ÁREA ATENDENTE E MÉDICOS (Agendamentos e Painel de Chamada)

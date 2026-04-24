@@ -263,10 +263,22 @@
             }
         }
 
-        // Trick nativo de clique oculto para habilitar Audio no browser Moderno (Kiosk mode exige ou usuário dá primeiro clique)
-        // O administrador que abrir a tela da TV fará 1 (um) clique na tela e ela nunca mais bloqueia som.
+        // Mapear vozes ao carregar
+        window.speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
+        };
+
+        // Trick nativo de clique oculto para habilitar Audio no browser Moderno
+        // O administrador fará 1 (um) clique na tela e ela nunca mais bloqueia som.
         document.body.addEventListener('click', () => {
             if(dingAudio.paused && !dingAudio.src) { dingAudio.load(); }
+            
+            // Força a síntese acordar para o navegador não bloquear o TTS em segundo plano depois
+            if('speechSynthesis' in window) {
+                let utterance = new SpeechSynthesisUtterance('');
+                utterance.volume = 0;
+                window.speechSynthesis.speak(utterance);
+            }
         }, {once:true});
 
     </script>

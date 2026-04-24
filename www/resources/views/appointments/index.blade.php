@@ -31,40 +31,53 @@
 @push('scripts')
     {!! $dataTable->scripts() !!}
     <script>
-        function callPatientTV(id, url) {
-            Swal.fire({
-                title: 'Chamar na TV',
-                input: 'text',
-                inputLabel: 'Para qual Sala/Consultório?',
-                inputPlaceholder: 'Ex: Consultório 3, Sala de Triagem',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: '<i class="bi bi-megaphone-fill me-1"></i> Chamar Agora',
-                cancelButtonText: 'Cancelar',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Você precisa informar a sala!'
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Anunciando...',
-                        text: 'Aguarde, disparando no Totem.',
-                        allowOutsideClick: false,
-                        didOpen: () => { Swal.showLoading() }
-                    });
+        const loggedDocRoom = {!! Auth::guard('doctor')->check() && Auth::guard('doctor')->user()->current_room ? "'" . Auth::guard('doctor')->user()->current_room . "'" : 'null'  !!};
+        const isDoctor = {{ Auth::guard('doctor')->check() ? 'true' : 'false' }};
 
-                    axios.post(url, { room: result.value })
-                        .then(response => {
-                            Swal.fire('Chamado com Sucesso!', response.data.message, 'success');
-                            window.LaravelDataTables["appointments-table"].ajax.reload();
-                        })
-                        .catch(error => {
-                            Swal.fire('Erro!', 'Não foi possível contatar o Totem da TV.', 'error');
-                        });
+        function submitCall(url, roomVal) {
+            Swal.fire({
+                title: 'Anunciando na TV...',
+                text: 'Disparando no Totem da recepção.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            axios.post(url, { room: roomVal })
+                .then(response => {
+                    Swal.fire('Chamado!', response.data.message, 'success');
+                    window.LaravelDataTables["appointments-table"].ajax.reload();
+                })
+                .catch(error => {
+                    Swal.fire('Erro!', 'Não foi possível contatar o Totem.', 'error');
+                });
+        }
+
+        function callPatientTV(id, url) {
+            if(isDoctor) {
+                if(!loggedDocRoom) {
+                    Swal.fire('Sem Sala Associada', 'Você precisa informar via Botão Superior (no Topo do seu Painel) qual o seu consultório do dia para utilizar a Chamada Expressa 1-Click!', 'warning');
+                    return;
                 }
-            })
+                // 1-Click Direto
+                submitCall(url, loggedDocRoom);
+            } else {
+                // Recepção acionando, pede a sala
+                Swal.fire({
+                    title: 'Chamar na TV',
+                    input: 'text',
+                    inputLabel: 'Para qual Sala/Consultório o paciente deve se direcionar?',
+                    inputPlaceholder: 'Ex: Sala de Triagem',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Chamar Agora',
+                    cancelButtonText: 'Cancelar',
+                    inputValidator: (value) => {
+                        if (!value) return 'Informe a sala!'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) submitCall(url, result.value);
+                });
+            }
         }
     </script>
 @endpush

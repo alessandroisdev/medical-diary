@@ -18,6 +18,9 @@
     
     <!-- Datatables CSS -->
     <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.css" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-light">
 
@@ -89,7 +92,17 @@
                     @if(Auth::guard('admin')->check())
                         <span class="badge bg-danger me-2">ADMIN</span> {{ Auth::guard('admin')->user()->name }}
                     @elseif(Auth::guard('doctor')->check())
-                        <span class="badge bg-success me-2">MÉDICO</span> {{ Auth::guard('doctor')->user()->name }}
+                        @php $doc = Auth::guard('doctor')->user(); @endphp
+                        @if($doc->current_room)
+                            <button type="button" class="btn btn-sm btn-success me-2 rounded-pill shadow-sm" onclick="promptDoctorRoom('{{ $doc->current_room }}')">
+                                <i class="bi bi-geo-alt-fill me-1"></i> {{ $doc->current_room }}
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-sm btn-danger me-2 rounded-pill shadow-sm" onclick="promptDoctorRoom('')">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Fazer Check-In na Sala
+                            </button>
+                        @endif
+                        <span class="badge bg-success me-2 align-self-center">MÉDICO</span> <span class="align-self-center">{{ $doc->name }}</span>
                     @elseif(Auth::guard('collaborator')->check())
                         <span class="badge bg-info text-dark me-2">RECEPÇÃO</span> {{ Auth::guard('collaborator')->user()->name }}
                     @elseif(Auth::guard('client')->check())
@@ -115,6 +128,37 @@
     <!-- Script de Fallback e Jquery/Datatables -->
     <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.js"></script>
     
+    @auth('doctor')
+    <script>
+        function promptDoctorRoom(currentRoom) {
+            Swal.fire({
+                title: currentRoom ? 'Mudar Sala de Atendimento' : 'Fazer Check-In',
+                input: 'text',
+                inputValue: currentRoom,
+                inputLabel: 'Qual a sua Sala/Consultório atualmente?',
+                inputPlaceholder: 'Ex: Consultório 3',
+                icon: 'hospital',
+                showCancelButton: true,
+                showDenyButton: currentRoom ? true : false,
+                denyButtonText: 'Sair da Sala (Check-Out)',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if(!result.value && !currentRoom) return; // ignore empty
+                    axios.post('{{ route("doctor.room.update") }}', { room: result.value })
+                         .then(res => { window.location.reload(); })
+                         .catch(e => { Swal.fire('Erro', 'Ocorreu um erro ao salvar o local', 'error'); });
+                } else if (result.isDenied) {
+                    // Clicou em sair
+                    axios.post('{{ route("doctor.room.update") }}', { room: null })
+                         .then(res => { window.location.reload(); });
+                }
+            });
+        }
+    </script>
+    @endauth
+
     @stack('scripts')
 </body>
 </html>
