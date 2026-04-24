@@ -74,15 +74,48 @@ paths:
                 items:
                   type: string
                   example: '14:30'
-  /attendance/next:
+  /attendance/stream:
     get:
-      summary: TV Toten de Chamadas - Server Sent Events (SSE)
-      description: Endpoint escutado eternamente por EventSource.php no Front da TV.
+      summary: TV Saguão - Server Sent Events (SSE)
+      description: Endpoint de Streaming infinito em text/event-stream. Usado pela TV para tocar o som de Ping e as Vozes do Robô TTS.
       responses:
         200:
-          description: Stream Event response contendo dados do paciente atual.
+          description: Evento disparado quando um Médico OU um Guichê pressiona o Action Button.
           content:
             text/event-stream:
               schema:
                 type: string
-                example: "data: {'status': 'arrived', 'client_name': 'João'}\n\n"
+                example: "event: NewCall\ndata: {\"id\": \"uuid\", \"client_name\": \"Senha P001\", \"doctor_name\": \"Recepção\", \"room\": \"Guichê 1\", \"is_ticket\": true, \"ticket_type\": \"priority\"}\n\n"
+  
+  /api/tickets/generate:
+    post:
+      summary: Totem de Autoatedimento - Gerador de Senhas
+      operationId: generateTotemTicket
+      description: Requisitado pelo Servidor Node.JS Local (`/totem`) ligado na maquininha térmica para empurrar o layout do Ticket pro banco alocando seu sequencial de 0 a 999.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum: [common, priority]
+      responses:
+        '200':
+          description: Sucesso ao salvar no banco.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  ticket:
+                    type: string
+                    example: "P005"
+                  id:
+                    type: string
+                    format: uuid

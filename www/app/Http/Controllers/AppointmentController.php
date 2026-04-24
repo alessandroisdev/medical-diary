@@ -29,7 +29,10 @@ class AppointmentController extends Controller
 {
     public function index(AppointmentDataTable $dataTable)
     {
-        return $dataTable->render('appointments.index');
+        $doctors = \App\Models\Doctor::orderBy('name')->get();
+        $clients = \App\Models\Client::orderBy('name')->get();
+
+        return $dataTable->render('appointments.index', compact('doctors', 'clients'));
     }
 
     public function create()

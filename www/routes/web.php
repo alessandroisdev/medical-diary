@@ -81,8 +81,9 @@ Route::middleware(['auth:collaborator'])->group(function () {
     Route::patch('/reception/tickets/{ticket}/finish', [App\Http\Controllers\TicketQueueController::class, 'finish'])->name('reception.ticket.finish');
 });
 
-// API DO TOTEM (Acesso Livro Localhost)
-Route::post('/api/tickets/generate', [App\Http\Controllers\TicketQueueController::class, 'generate']);
+// API DO TOTEM (Acesso Localhost)
+Route::post('/api/tickets/generate', [App\Http\Controllers\TicketQueueController::class, 'generate'])
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 // 4. ÁREA DO PACIENTE / CLIENTE
 Route::middleware(['auth:client'])->group(function () {

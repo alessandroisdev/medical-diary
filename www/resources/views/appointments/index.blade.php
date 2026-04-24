@@ -12,10 +12,58 @@
             </a>
         </div>
 
-        <div class="alert alert-primary shadow-sm border-0 d-flex align-items-center">
+        <div class="alert alert-primary shadow-sm border-0 d-flex align-items-center mb-4">
             <i class="bi bi-info-circle fa-2x me-3"></i>
             <div>
-                Aqui você visualiza toda a fila da clínica. Utilize a coluna <b>Ações</b> para fazer o Check-In do paciente quando ele chegar, e depois utilize o botão <b>Chamar na TV do Saguão</b> para notificar que é a vez dele.
+                Aqui você visualiza toda a fila da clínica de forma inteligente. O grid prioriza nativamente os pacientes que já <b class="text-danger">Chegaram</b> hoje para focar no fluxo do balcão. Use a coluna de <b>Ações</b> para despachar pra TV.
+            </div>
+        </div>
+
+        <!-- Painel de Filtros Avançados -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="card-title fw-bold text-muted mb-3"><i class="bi bi-funnel me-1"></i> Filtros e Live Search</h6>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold">Por Dia</label>
+                        <input type="date" class="form-control" id="date_filter">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold">Status do Paciente</label>
+                        <select class="form-select" id="status_filter">
+                            <option value="">Exibir Todos (Ordem de Relevância)</option>
+                            <option value="scheduled">Agendados Futuros</option>
+                            <option value="confirmed">Confirmados Via Site</option>
+                            <option value="arrived">Aguardando no Balcão</option>
+                            <option value="in_consultation">Dentro do Consultório</option>
+                            <option value="finished">Já Atendidos (Finalizados)</option>
+                            <option value="canceled">Cancelados Manuais</option>
+                            <option value="no_show">Pacientes que Faltaram</option>
+                        </select>
+                    </div>
+                    
+                    @if(!auth()->guard('doctor')->check())
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold">Filtro de Médico <span class="badge bg-secondary ms-1" style="font-size: 0.6rem;">Search</span></label>
+                        <select class="form-select ts-filter" id="doctor_filter" placeholder="Escreva pra pesquisar...">
+                            <option value="">Qualquer Médico</option>
+                            @foreach($doctors as $d)
+                                <option value="{{ $d->id }}">{{ $d->name }} @if($d->specialty) - {{ $d->specialty->name }} @endif</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+                    
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold">Filtro de Paciente <span class="badge bg-secondary ms-1" style="font-size: 0.6rem;">Search</span></label>
+                        <select class="form-select ts-filter" id="client_filter" placeholder="Escreva CPF ou Nome...">
+                            <option value="">Pesquisar em Toda Base</option>
+                            @foreach($clients as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->cpf ?? 'Sem Doc' }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -29,11 +77,32 @@
 @endsection
 
 @push('scripts')
+    <!-- Tom Select Assets -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
     {!! $dataTable->scripts() !!}
     <script>
         const loggedDocRoom = {!! Auth::guard('doctor')->check() && Auth::guard('doctor')->user()->current_room ? "'" . Auth::guard('doctor')->user()->current_room . "'" : 'null'  !!};
         const isDoctor = {{ Auth::guard('doctor')->check() ? 'true' : 'false' }};
 
+        // 1. Inicializa TomSelect (Live Search Elegante)
+        document.querySelectorAll('.ts-filter').forEach((el) => {
+            new TomSelect(el, {
+                create: false,
+                sortField: { field: "text", direction: "asc" },
+                placeholder: el.getAttribute('placeholder')
+            });
+        });
+
+        // 2. Observer de Filtros -> Dispara Reload na Tabela (Enviando pro Backend a Query)
+        $('#date_filter, #status_filter, #doctor_filter, #client_filter').on('change', function() {
+            window.LaravelDataTables["appointments-table"].ajax.reload();
+        });
+
+        // ==========================================
+        // TV Caller Functions
+        // ==========================================
         function submitCall(url, roomVal) {
             Swal.fire({
                 title: 'Anunciando na TV...',

@@ -137,6 +137,13 @@
         <div class="clock-display" id="clock">00:00:00</div>
     </header>
 
+    <!-- Camada de Ativação Anti-Autoplay -->
+    <div id="startOverlay" style="position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(15,23,42,0.95); z-index: 9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <i class="bi bi-play-circle-fill text-primary" style="font-size: 8rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="startSystem()"></i>
+        <h2 class="mt-4 fw-bold">TV Pausada</h2>
+        <p class="text-muted fs-5">Clique no Player para habilitar Áudio e Falas da TV.</p>
+    </div>
+
     <!-- Corpo do Totem -->
     <div class="totem-body">
         
@@ -303,17 +310,18 @@
         };
 
         // Trick nativo de clique oculto para habilitar Audio no browser Moderno
-        // O administrador fará 1 (um) clique na tela e ela nunca mais bloqueia som.
-        document.body.addEventListener('click', () => {
-            if(dingAudio.paused && !dingAudio.src) { dingAudio.load(); }
+        function startSystem() {
+            document.getElementById('startOverlay').style.display = 'none';
+            // Pre-load audio track via user-gesture
+            dingAudio.load();
             
-            // Força a síntese acordar para o navegador não bloquear o TTS em segundo plano depois
+            // Força a síntese acordar silenciosamente para o navegador não bloquear o TTS
             if('speechSynthesis' in window) {
                 let utterance = new SpeechSynthesisUtterance('');
                 utterance.volume = 0;
                 window.speechSynthesis.speak(utterance);
             }
-        }, {once:true});
+        }
 
     </script>
 </body>

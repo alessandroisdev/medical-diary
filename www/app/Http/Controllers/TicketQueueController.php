@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\ServiceTicket;
 use App\Models\Setting;
 use Illuminate\Http\Request;
