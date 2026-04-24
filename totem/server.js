@@ -4,6 +4,7 @@ const axios = require('axios');
 const path = require('path');
 const ThermalPrinter = require("node-thermal-printer").printer;
 const PrinterTypes = require("node-thermal-printer").types;
+const { exec } = require('child_process');
 
 const fs = require('fs');
 
@@ -37,6 +38,18 @@ app.post('/totem/config', (req, res) => {
     const newData = { ...current, ...req.body };
     saveConfig(newData);
     res.json({ success: true, message: 'Configurações Vivas Salvas!' });
+});
+app.get('/totem/printers', (req, res) => {
+    exec('powershell -Command "Get-Printer | Select-Object Name | ConvertTo-Json"', (err, stdout, stderr) => {
+        if (err) return res.json([]);
+        try {
+            if(!stdout || stdout.trim() === '') return res.json([]);
+            let data = JSON.parse(stdout);
+            if (!Array.isArray(data)) data = [data]; // Trata caso aja apenas 1 (Vira objeto simples)
+            const names = data.map(p => p.Name).filter(Boolean);
+            res.json(names);
+        } catch(e) { res.json([]); }
+    });
 });
 
 app.post('/totem/request', async (req, res) => {

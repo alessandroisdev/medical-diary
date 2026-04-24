@@ -225,18 +225,29 @@
                     if(resConfig.data) currentConfig = resConfig.data;
                 } catch(e) { console.warn("Aba config vazia, usando default"); }
 
+                // 1.5 Puxa lista de impressões
+                let datalistHtml = '<datalist id="printerList">';
+                try {
+                    const resPrinters = await axios.get('/totem/printers');
+                    if(resPrinters.data && resPrinters.data.length > 0) {
+                        resPrinters.data.forEach(p => { datalistHtml += `<option value="${p}">`; });
+                    }
+                } catch(e) {}
+                datalistHtml += '</datalist>';
+
                 // 2. Abre Modal Oculto
                 const { value: formValues } = await Swal.fire({
                     title: 'Configuração Física (Hardware)',
                     html: `
                         <div style="text-align: left; padding: 10px;">
-                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Nome exato do Driver no Windows (Ex: EPSON TM-T20X Receipt)</label>
-                            <input id="swal-input1" class="swal2-input" value="${currentConfig.printer_name}" style="width: 90%; margin: 0 auto 20px;">
+                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Impressoras Detectadas (Selecione ou Digite o IP/Rede)</label>
+                            <input id="swal-input1" class="swal2-input" list="printerList" value="${currentConfig.printer_name}" style="width: 90%; margin: 0 auto 20px;" placeholder="Ex: EPSON TM-T20X">
+                            ${datalistHtml}
                             
-                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Modo de Impressão</label>
+                            <label class="form-label" style="display:block; margin-bottom: 5px; font-size: 0.9em; color:#cbd5e1;">Status Operacional</label>
                             <select id="swal-input2" class="swal2-input" style="width: 90%; margin: 0 auto;">
-                                <option value="false" ${!currentConfig.is_production || currentConfig.is_production==='false' ? 'selected' : ''}>[DEV] Desligado (Apenas Console)</option>
-                                <option value="true" ${(currentConfig.is_production===true || currentConfig.is_production==='true') ? 'selected' : ''}>[PROD] Ligado (Imprime Físico USB/LAN)</option>
+                                <option value="false" ${!currentConfig.is_production || currentConfig.is_production==='false' ? 'selected' : ''}>[DEV] Desligado (Apenas Teste Tela)</option>
+                                <option value="true" ${(currentConfig.is_production===true || currentConfig.is_production==='true') ? 'selected' : ''}>[PROD] Ligado (Forçar Impressão Real)</option>
                             </select>
                         </div>
                     `,
