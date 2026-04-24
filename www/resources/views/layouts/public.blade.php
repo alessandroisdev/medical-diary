@@ -40,7 +40,7 @@
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4 text-white" href="{{ route('home') }}">
-                <i class="bi bi-heart-pulse-fill text-danger me-2"></i>Medical Diary
+                <i class="bi bi-heart-pulse-fill text-danger me-2"></i>{{ $settings['site_title'] ?? 'Medical Diary' }}
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navItems">
                 <span class="navbar-toggler-icon"></span>
@@ -68,7 +68,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-4 opacity-75 mt-auto">
         <div class="container">
-            <p class="mb-0">© 2026 Medical Diary Inc. - Plataforma Institucional e Assistencial.</p>
+            <p class="mb-0">© {{ date('Y') }} {{ $settings['site_title'] ?? 'Medical Diary' }} Inc. - Plataforma Institucional e Assistencial.</p>
              <div class="d-flex justify-content-center gap-3 mt-2">
                 @if(!empty($settings['social_instagram']))
                     <a href="{{ $settings['social_instagram'] }}" class="text-white opacity-75"><i class="bi bi-instagram fs-5"></i></a>

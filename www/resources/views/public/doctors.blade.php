@@ -4,8 +4,8 @@
 @section('content')
 <div class="page-header text-center">
     <div class="container">
-        <h1 class="fw-bold">Nosso Corpo Clínico</h1>
-        <p class="fs-5 opacity-75">Profissionais selecionados focados no cuidado humanizado e preciso.</p>
+        <h1 class="fw-bold">{{ $settings['team_page_title'] ?? 'Nosso Corpo Clínico' }}</h1>
+        <p class="fs-5 opacity-75">{{ $settings['team_page_subtitle'] ?? 'Profissionais selecionados focados no cuidado humanizado e preciso.' }}</p>
     </div>
 </div>
 

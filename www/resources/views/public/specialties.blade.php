@@ -4,8 +4,8 @@
 @section('content')
 <div class="page-header text-center">
     <div class="container">
-        <h1 class="fw-bold">Nossas Especialidades</h1>
-        <p class="fs-5 opacity-75">Soluções direcionadas para promover seu bem-estar completo.</p>
+        <h1 class="fw-bold">{{ $settings['specialty_page_title'] ?? 'Nossas Especialidades' }}</h1>
+        <p class="fs-5 opacity-75">{{ $settings['specialty_page_subtitle'] ?? 'Soluções direcionadas para promover seu bem-estar completo.' }}</p>
     </div>
 </div>
 

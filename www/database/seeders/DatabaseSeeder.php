@@ -21,17 +21,46 @@ class DatabaseSeeder extends Seeder
 
         // Configurações Globais Iniciais
         $defaultSettings = [
-            ['key' => 'cancellation_tolerance_hours', 'label' => 'Tolerância (Horas) para Cancelamento Paciente', 'value' => '24'],
-            ['key' => 'contact_email', 'label' => 'E-mail Comercial (Recebe os contatos do site)', 'value' => 'comercial@medical.diary'],
-            ['key' => 'contact_phone', 'label' => 'Telefone/WhatsApp Principal', 'value' => '(11) 4002-8922'],
-            ['key' => 'clinic_address', 'label' => 'Endereço Completo', 'value' => 'Avenida Paulista, 1000 - Bela Vista, SP'],
-            ['key' => 'map_iframe_url', 'label' => 'URL do Mapa (Google Maps Embed)', 'value' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1432420935515!2d-46.65593888502227!3d-23.563319084681643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr'],
-            ['key' => 'social_instagram', 'label' => 'Link do Instagram', 'value' => 'https://instagram.com/medicaldiary'],
-            ['key' => 'smtp_host', 'label' => 'SMTP Host', 'value' => 'smtp.mailtrap.io'],
-            ['key' => 'smtp_port', 'label' => 'SMTP Porta', 'value' => '2525'],
-            ['key' => 'smtp_username', 'label' => 'SMTP Usuário', 'value' => 'd2f8...'],
-            ['key' => 'smtp_password', 'label' => 'SMTP Senha', 'value' => '12345'],
-            ['key' => 'smtp_encryption', 'label' => 'SMTP Criptografia (tls, ssl)', 'value' => 'tls'],
+            // Categoria Logistica
+            ['key' => 'cancellation_tolerance_hours', 'label' => '[Logística] Tolerância (Horas) para Cancelamento Paciente', 'value' => '24'],
+            ['key' => 'contact_email', 'label' => '[Contato] E-mail Comercial (Recebe os contatos do site)', 'value' => 'comercial@medical.diary'],
+            ['key' => 'contact_phone', 'label' => '[Contato] Telefone/WhatsApp Principal', 'value' => '(11) 4002-8922'],
+            ['key' => 'clinic_address', 'label' => '[Contato] Endereço Completo', 'value' => 'Avenida Paulista, 1000 - Bela Vista, SP'],
+            ['key' => 'map_iframe_url', 'label' => '[Website] URL do Mapa (Google Maps Embed)', 'value' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1432420935515!2d-46.65593888502227!3d-23.563319084681643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr'],
+            ['key' => 'social_instagram', 'label' => '[Redes Sociais] Link do Instagram', 'value' => 'https://instagram.com/medicaldiary'],
+            
+            // SMTP
+            ['key' => 'smtp_host', 'label' => '[SMTP Servidor] SMTP Host', 'value' => 'smtp.mailtrap.io'],
+            ['key' => 'smtp_port', 'label' => '[SMTP Servidor] SMTP Porta', 'value' => '2525'],
+            ['key' => 'smtp_username', 'label' => '[SMTP Servidor] SMTP Usuário', 'value' => 'd2f8...'],
+            ['key' => 'smtp_password', 'label' => '[SMTP Servidor] SMTP Senha', 'value' => '12345'],
+            ['key' => 'smtp_encryption', 'label' => '[SMTP Servidor] SMTP Criptografia (tls, ssl)', 'value' => 'tls'],
+
+            // CMS Website - Geral & Home
+            ['key' => 'site_title', 'label' => '[Website] Nome Central da Clínica', 'value' => 'Medical Diary'],
+            ['key' => 'home_hero_title', 'label' => '[Website Home] Título Principal Banner', 'value' => 'Sua Saúde Mapeada Digitalmente.'],
+            ['key' => 'home_hero_subtitle', 'label' => '[Website Home] Subtítulo Banner', 'value' => 'Consultas simplificadas, prontuário seguro em Nuvem e comunicação direta. Bem-vindo à evolução da saúde conectada.'],
+            ['key' => 'home_hero_box_title', 'label' => '[Website Home] Informação Banner Título', 'value' => 'Acesso 100% Protegido'],
+            ['key' => 'home_hero_box_text', 'label' => '[Website Home] Informação Banner Texto', 'value' => 'Suas informações clínicas contam com criptografia de ponta a ponta e rígido isolamento em servidores blindados.'],
+            ['key' => 'home_welcome_title', 'label' => '[Website Home] Título Bem-vindo', 'value' => 'Referência em Cuidado Contínuo'],
+            ['key' => 'home_welcome_text', 'label' => '[Website Home] Texto Bem-vindo', 'value' => 'Somos focados em prover aos nossos clientes uma plataforma inteligente e segura. Escolha um de nossos canais acima para conhecer a clínica ou acesse o Portal para Agendar seus horários.'],
+            
+            // CMS Website - Infra
+            ['key' => 'infra_page_title', 'label' => '[Website Infra] Título da Página', 'value' => 'Nossa Infraestrutura Hospitalar'],
+            ['key' => 'infra_page_subtitle', 'label' => '[Website Infra] Subtítulo Header', 'value' => 'Conheça o padrão de qualidade e tecnologia de nossa matriz.'],
+            ['key' => 'infra_image_url', 'label' => '[Website Infra] URL de Foto da Clínica', 'value' => 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop'],
+            ['key' => 'infra_title', 'label' => '[Website Infra] Título de Corpo', 'value' => 'Mais do que Clínicas, Ecossistemas de Saúde'],
+            ['key' => 'infra_text', 'label' => '[Website Infra] Texto Complementar', 'value' => 'Acreditamos que o ambiente impacta diretamente a taxa de cura. Por isso as unidades são pensadas para evitar estresse.'],
+            ['key' => 'infra_point_1', 'label' => '[Website Infra] Vantagem Tópico 1', 'value' => 'Isolamento Acústico Premium nos Consultórios'],
+            ['key' => 'infra_point_2', 'label' => '[Website Infra] Vantagem Tópico 2', 'value' => 'Softwares Autorais de Prontuário para Evitar Filas'],
+            ['key' => 'infra_point_3', 'label' => '[Website Infra] Vantagem Tópico 3', 'value' => 'Sistema de Exaustão de Ar com Filtro HEPA'],
+
+            // CMS Website - Outros Menus
+            ['key' => 'specialty_page_title', 'label' => '[Website Especialidades] Título', 'value' => 'Nossas Especialidades'],
+            ['key' => 'specialty_page_subtitle', 'label' => '[Website Especialidades] Subtítulo', 'value' => 'Soluções direcionadas para promover seu bem-estar completo.'],
+            
+            ['key' => 'team_page_title', 'label' => '[Website Equipe] Título', 'value' => 'Nosso Corpo Clínico'],
+            ['key' => 'team_page_subtitle', 'label' => '[Website Equipe] Subtítulo', 'value' => 'Profissionais selecionados focados no cuidado humanizado e preciso.'],
         ];
 
         foreach ($defaultSettings as $s) {
